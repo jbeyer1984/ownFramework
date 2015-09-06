@@ -19,8 +19,10 @@ class Router
   {
     $this->routing = [
       'task1' => [
-        'action' => 'show/${id}/${str}',
-        'class' => 'MyApp\src\Tasks\Task1',
+        'show' => [
+          'params' => '${id}/${str}',
+          'class' => 'MyApp\src\Tasks\Task1',
+        ]
       ]
     ];
   }
@@ -31,17 +33,22 @@ class Router
     $urlParams = explode('/', $requestUrl);
     Components::getInstance()->get('logger')->log('$sections', $urlParams);
     $subject = array_shift($urlParams);
-    $routeSettings = $this->routing[$subject];
+    $action = array_shift($urlParams);
+    if (!isset($this->routing[$subject])) {
+      throw new Exception("subject does not exist for route: ".$subject.":".$action);
+    }
+    if (!isset($this->routing[$subject][$action])) {
+      throw new Exception("action does not exist for route: ".$subject.":".$action);
+    }
+    $routeSettings = $this->routing[$subject][$action];
     $class = $routeSettings['class'];
-    $params = explode('/', $routeSettings['action']);
-    $action = array_shift($params);
+    $params = explode('/', $routeSettings['params']);
     $obj = new $class();
     //@todo validate params
     if (count($params) != count($urlParams)) {
       throw new Exception("wrong parameters for route: ".$subject.":".$action);
     }
     call_user_func_array(array($obj, $action), $urlParams);
-    
     
     Components::getInstance()->get('logger')->log('$params', $params);
   }
