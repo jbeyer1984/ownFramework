@@ -4,6 +4,7 @@
 namespace MyApp\src\Utility;
 
 use MyApp\src\Components\Components;
+use \Exception;
 
 class Router
 {
@@ -30,13 +31,15 @@ class Router
     $urlParams = explode('/', $requestUrl);
     Components::getInstance()->get('logger')->log('$sections', $urlParams);
     $subject = array_shift($urlParams);
-//    $params = preg_grep('//', $sections);
     $routeSettings = $this->routing[$subject];
     $class = $routeSettings['class'];
     $params = explode('/', $routeSettings['action']);
     $action = array_shift($params);
     $obj = new $class();
     //@todo validate params
+    if (count($params) != count($urlParams)) {
+      throw new Exception("wrong parameters for route: ".$subject.":".$action);
+    }
     call_user_func_array(array($obj, $action), $urlParams);
     
     
