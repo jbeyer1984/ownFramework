@@ -3,8 +3,16 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
   <title>Document</title>
+  <script src="/public/js/jquery-1.11.3.js"></script>
+  <script src="/public/js/blog.js"></script>
 </head>
 <body>
-  ich sage {{ name }}
+  ich sage {{ name }} das er id: {{ id }} hat und ein {{ str }} ist ;).
+
+  <form action="index.php/task1/show" method="POST">
+    <input type="text" name="id" value="1"\>
+    <input type="text" name="str" value="hallo"\>
+    <input type="submit" value="submit">
+  </form>
 </body>
 </html>

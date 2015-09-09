@@ -22,8 +22,8 @@ class Task1 extends Tasks
   
   public function show($id, $str)
   {
-    var_dump($id);
-    var_dump($str);
+//    var_dump($id);
+//    var_dump($str);
     $db = $this->components->get('db');
 //    $db->execute(
 //      "insert into Student set prename=':prename', aftername=':aftername', grade=:grade",
@@ -35,6 +35,18 @@ class Task1 extends Tasks
 //    );
 //    $result = $db->execute('select * from Student')->getData();
 //    $this->components->get('logger')->log('student', $result);
-    echo $this->components->get('view')->render('Task1/show.twig', array('name' => 'Fabien'));
+//    Components::getInstance()->get('logger')->log('$_SERVER[REQUEST_METHOD]', $_SERVER['REQUEST_METHOD']);
+//    if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
+//      echo json_encode(array(
+//        'id' => $id,
+//        'str' => $str
+//      ));
+//    } else {
+      echo $this->components->get('view')->render('Task1/show.twig', array(
+        'name' => 'Fabien',
+        'id' => $id,
+        'str' => $str,
+      ));  
+//    }
   }
 }

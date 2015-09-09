@@ -3,6 +3,7 @@
 namespace MyApp\src\Utility\Router;
 
 use \Exception;
+use MyApp\src\Components\Components;
 
 class Route
 {
@@ -82,15 +83,17 @@ class Route
       $params = $this->params;
     } elseif ('post' == $this->method) {
       $post = $_POST;
+      Components::getInstance()->get('logger')->log('$post', $post);
       $postParams = array();
-      $paramsMethodConfig = explode('/', $this->routing[$this->subject][$this->action]['params'][$this->method]);
-      foreach ($paramsMethodConfig as $identifier => $data) {
+      $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
+      Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
+      foreach ($paramsMethodConfig as $identifier) {
         if (!isset($post[$identifier])) {
           $str = $this->method.' parameter: '.$identifier.' not sent in params';
           echo $str;
           throw new Exception($str);
         } else {
-          $postParams[$identifier] = $data;
+          $postParams[$identifier] = $post[$identifier];
         }
       }
       $params = $postParams;
