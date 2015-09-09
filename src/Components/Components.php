@@ -3,7 +3,7 @@
 namespace MyApp\src\Components;
 
 use MyApp\src\Utility\Db;
-use MyApp\src\Utility\Router;
+use MyApp\src\Utility\Router\Router;
 use MyApp\src\Utility\Vars;
 use MyApp\src\Utility\Logger;
 use \Exception;
@@ -50,7 +50,9 @@ class Components
         $this->components[$identifier] = new Db();
         break;
       case 'router' :
-        $this->components[$identifier] = new Router();
+        $router = new Router();
+        $router->initRoutingConfig();
+        $this->components[$identifier] = $router;
         break;
       case 'view' :
         // twig loading
