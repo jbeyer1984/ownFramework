@@ -34,6 +34,29 @@ class Router
           ],
           'class' => 'MyApp\src\Tasks\Task1',
         ]
+      ],
+      'blog' => [
+        'login' => [
+          'params' => [
+            'get' => '',
+            'post' => 'email/password'
+          ],
+          'class' => 'MyApp\src\Tasks\Blog',
+        ],
+        'show' => [
+          'params' => [
+            'get' => ''
+//            'post' => 'email/password'
+          ],
+          'class' => 'MyApp\src\Tasks\Blog',
+        ],
+        'logout' => [
+          'params' => [
+//            'get' => ''
+            'post' => ''
+          ],
+          'class' => 'MyApp\src\Tasks\Blog',
+        ]
       ]
     ];
     return $this;
@@ -43,8 +66,7 @@ class Router
   {
     $route = new Route();
     $route->generate($this);
-
-    $this->verifyRouting($route);
+//    Components::getInstance()->get('logger')->log('$route', $route);
 
     $routeSettings = $this->routingConfig[$route->getSubject()][$route->getAction()];
     $class = $routeSettings['class'];
@@ -53,21 +75,7 @@ class Router
     Components::getInstance()->get('logger')->log('$route', $route);
     call_user_func_array(array($obj, $route->getAction()), $route->getParams());
     
-    Components::getInstance()->get('logger')->log('$params', $route->getParams());
-  }
-
-  /**
-   * @param $route Route
-   * @throws Exception
-   */
-  private function verifyRouting($route)
-  {
-    if (!isset($this->routingConfig[$route->getSubject()])) {
-      throw new Exception("subject does not exist for route: " . $this->subject . ":" . $this->action);
-    }
-    if (!isset($this->routingConfig[$route->getSubject()][$route->getAction()])) {
-      throw new Exception("action does not exist for route: " . $this->subject . ":" . $this->action);
-    }
+//    Components::getInstance()->get('logger')->log('$params', $route->getParams());
   }
 
   /**

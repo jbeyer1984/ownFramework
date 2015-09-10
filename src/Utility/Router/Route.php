@@ -38,13 +38,17 @@ class Route
   public function generate($router)
   {
     $requestUrl = str_replace('/index.php/', '', $_SERVER['REQUEST_URI']);
+    Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
     $this->method = strtolower($_SERVER['REQUEST_METHOD']);
     $urlParams = explode('/', $requestUrl);
     $this->verifyCountOfParams($urlParams);
     $this->subject = array_shift($urlParams);
     $this->action = array_shift($urlParams);
     $this->params = $urlParams;
+    Components::getInstance()->get('logger')->log('$this', $this);
+    $this->verifyRouting($router->getRoutingConfig());
     $this->params = $this->retVerifiedRoutingParams($router->getRoutingConfig());
+    Components::getInstance()->get('logger')->log('$this->params', $this->params);
   }
 
   /**
@@ -73,23 +77,36 @@ class Route
   private function retVerifiedRoutingParams($routingConfig)
   {
     $params = array();
+    $paramsMethodConfigStr = $routingConfig[$this->subject][$this->action]['params'][$this->method];
+    Components::getInstance()->get('logger')->log('$paramsMethodConfigStr', $paramsMethodConfigStr);
+    $paramsMethodConfig = array();
+
+//    Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
+//    Components::getInstance()->get('logger')->log('count($paramsMethodConfig)', count($paramsMethodConfig));
+
     if ('get' == $this->method) {
-      $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
+      if (!empty($paramsMethodConfigStr) && 0 < substr_count($paramsMethodConfigStr, '/')) {
+        $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
+      }
+      Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
       if (count($paramsMethodConfig) != count($this->params)) {
-        $str = "wrong ". $this->method ." parameters for route: " . $this->subject . ":" . $this->action;
+        $str = "wrong ". $this->method ." parameters for route: " . $this->subject . ":" . $this->action.', should be ';
+        $str .= implode(', ', $paramsMethodConfig);
         echo $str;
         throw new Exception($str);
       }
       $params = $this->params;
     } elseif ('post' == $this->method) {
       $post = $_POST;
-      Components::getInstance()->get('logger')->log('$post', $post);
       $postParams = array();
-      $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
+//      Components::getInstance()->get('logger')->log('$post', $post);
+      if (!empty($paramsMethodConfigStr) && 0 < substr_count($paramsMethodConfigStr, '/')) {
+        $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
+      }
       Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
       foreach ($paramsMethodConfig as $identifier) {
         if (!isset($post[$identifier])) {
-          $str = $this->method.' parameter: '.$identifier.' not sent in params';
+          $str = $this->method.' parameter: '.$identifier.' not sent in params, should be '.implode(', ', $paramsMethodConfig);
           echo $str;
           throw new Exception($str);
         } else {
@@ -99,6 +116,21 @@ class Route
       $params = $postParams;
     }
     return $params;
+  }
+
+  /**
+   * @param $routingConfig
+   * @throws Exception
+   * @internal param Route $route
+   */
+  private function verifyRouting($routingConfig)
+  {
+    if (!isset($routingConfig[$this->getSubject()])) {
+      throw new Exception("subject does not exist for route: " . $this->subject . ":" . $this->action);
+    }
+    if (!isset($routingConfig[$this->getSubject()][$this->getAction()])) {
+      throw new Exception("action does not exist for route: " . $this->subject . ":" . $this->action);
+    }
   }
 
   /**

@@ -6,27 +6,27 @@ var Blog = function() {
 
 Blog.prototype = {
   init : function () {
-    
+    this.bindAjaxSubmit();
+  },
+  bindAjaxSubmit : function () {
     var $form = $('form');
     var paramObj = {};
-    
     $form.submit( function (e) {
       e.preventDefault();
       $.each($form.serializeArray(), function(_, kv) {
         paramObj[kv.name] = kv.value;
       });
       $.ajax({
-        url: '/index.php/task1/show',
+        url: $form.attr('action'),
         method: 'post',
         data: paramObj,
         dataType: 'html',
         success: function (result) {
-          $('body').html(result);
+          $('.contentWrapper').html(result);
           console.log('result', result);
         }
       });
     });
-    //console.log($form.serializeArray());
   }
 };
 

@@ -28,25 +28,28 @@ class Task1 extends Tasks
 //    $db->execute(
 //      "insert into Student set prename=':prename', aftername=':aftername', grade=:grade",
 //      [
-//        'prename' => 'test',
-//        'aftername' => 'nach',
+//        'prename' => 'jonas',
+//        'aftername' => 'inject'.html_entity_decode('<script>alert("here")</script>'),
 //        'grade' => 5
 //      ]
 //    );
-//    $result = $db->execute('select * from Student')->getData();
-//    $this->components->get('logger')->log('student', $result);
+    $result = $db->execute('select * from Student')->getData();
+    $this->components->get('logger')->log('student', $result);
 //    Components::getInstance()->get('logger')->log('$_SERVER[REQUEST_METHOD]', $_SERVER['REQUEST_METHOD']);
-//    if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
-//      echo json_encode(array(
-//        'id' => $id,
-//        'str' => $str
-//      ));
-//    } else {
-      echo $this->components->get('view')->render('Task1/show.twig', array(
-        'name' => 'Fabien',
-        'id' => $id,
-        'str' => $str,
-      ));  
-//    }
+
+    $arrData = array(
+      'name' => 'Fabien',
+      'id' => $id,
+      'str' => $str,
+    );
+    if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
+      $template = 'Task1/show_rendered_content.twig';
+    } else {
+      $template = 'Task1/show.twig';
+    }
+    echo $this->components->get('view')->render($template, array(
+      'students' => $result,
+      'data' =>$arrData
+    ));
   }
 }

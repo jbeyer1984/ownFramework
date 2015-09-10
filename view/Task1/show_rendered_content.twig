@@ -1,0 +1,24 @@
+{#parent is from Task1/show.twig#}
+
+ich sage {{ data.name }} das er id: {{ data.id }} hat und ein {{ data.str }} ist ;).
+
+<table>
+  {#<li>hallo</li>#}
+  <tr>
+  {% for identifier, value in students[0] %}
+  <th>{{ identifier }}</th>
+  {% endfor %}
+  </tr>
+{% for student in students %}
+  <tr>
+  {% for identifier, value in student %}
+    <td>{{ identifier }}: {{ value }}</td>
+  {% endfor %}
+  </tr>
+{% endfor %}
+</table>
+<form action="/index.php/task1/show" method="POST">
+  <input type="text" name="id" value="1"\>
+  <input type="text" name="str" value="hallo"\>
+  <input type="submit" value="submit">
+</form>

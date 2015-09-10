@@ -6,13 +6,13 @@
   <title>Document</title>
   <script src="/public/js/jquery-1.11.3.js"></script>
   {% block customJavascript %}
-    <script src="/public/js/task1.js"></script>
+    <script src="/public/js/blog/blog.js"></script>
   {%  endblock %}
 </head>
 <body>
   {% block content %}
     <div class="contentWrapper">
-      {% include 'Task1/show_rendered_content.twig' %}
+      {% include 'Blog/login/login_rendered.twig' %}
     </div>
   {% endblock%}
 </body>

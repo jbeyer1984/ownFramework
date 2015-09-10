@@ -1,0 +1,21 @@
+{#parent is from Blog/show/show_rendered.twig#}
+
+<table>
+  <tr>
+  {% for identifier, value in users[0] %}
+  <th>{{ identifier }}</th>
+  {% endfor %}
+  </tr>
+{% for user in users %}
+  <tr>
+  {% for identifier, value in user %}
+    <td>{{ identifier }}: {{ value }}</td>
+  {% endfor %}
+  </tr>
+{% endfor %}
+</table>
+<form action="/index.php/blog/logout" method="POST">
+  {#<input type="text" name="email" value=""\>#}
+  {#<input type="password" name="password" value=""\>#}
+  <input type="submit" value="logout">
+</form>
