@@ -4,6 +4,7 @@ namespace MyApp\src\Tasks;
 
 
 use MyApp\src\Components\Components;
+use MyApp\src\Tasks\Interfaces\ResetInterface;
 
 class Tasks
 {

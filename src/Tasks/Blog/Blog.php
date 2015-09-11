@@ -1,12 +1,14 @@
 <?php
 
 
-namespace MyApp\src\Tasks;
+namespace MyApp\src\Tasks\Blog;
 
+use MyApp\src\Factories\UserFactory;
 use MyApp\src\Tasks\Tasks;
 use MyApp\src\Components\Components;
+use MyApp\src\Tasks\Interfaces\ResetInterface;
 
-class Blog extends Tasks
+class Blog extends Tasks implements ResetInterface
 {
   public function __construct()
   {
@@ -67,12 +69,15 @@ class Blog extends Tasks
       } else {
         $template .= '.twig';
       }
-      echo $this->components->get('view')->render($template);
+      echo $this->components->get('view')->render($template, array(
+        'templateContext' => 'login'
+      ));
     } else {
-      session_start();
+//      session_start();
       // set session data for user
       $salt = 'nonTheLess';
       $session = $_SESSION;
+      $session['id_user'] = $result[0]['id'];
       $session['email'] = $email;
       $session['password'] = $password.$salt;
       // @todo encrypt session data
@@ -108,10 +113,20 @@ class Blog extends Tasks
 //      $this->login();
       return;
     }
+
+    //user is logged in
     Components::getInstance()->get('logger')->log('$_SESSION', $_SESSION);
     $db = $this->components->get('db');
-    $query = "select * from User";
-    $result = $db->execute($query)->getData();
+    $sql = "select nick, prename, aftername from User";
+    $resultUser = $db->execute($sql)->getData();
+//    $sql = "select * from Message where id_user=:id_user";
+//    $resultMessage = $db->execute($sql, array(
+//      'id_user' => $_SESSION['id_user']
+//    ))->getData();
+    $user = UserFactory::getInstance()->retCreatedUser($_SESSION['id_user']);
+    $resultMessage = $user->getUserRepository()->getMessages();
+
+    Components::getInstance()->get('logger')->log('$resultMessage', $resultMessage);
 
     $template = 'Blog/'.strtolower(__FUNCTION__).'/'.strtolower(__FUNCTION__);
     if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
@@ -120,7 +135,9 @@ class Blog extends Tasks
       $template .= '.twig';
     }
     echo $this->components->get('view')->render($template, array(
-      'users' => $result,
+      'users' => $resultUser,
+      'messages' => $resultMessage,
+      'templateContext' => 'show'
     ));
   }
 

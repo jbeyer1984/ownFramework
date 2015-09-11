@@ -83,11 +83,19 @@ class Route
 
 //    Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
 //    Components::getInstance()->get('logger')->log('count($paramsMethodConfig)', count($paramsMethodConfig));
+    if (!empty($paramsMethodConfigStr)) {
+      if (0 < substr_count($paramsMethodConfigStr, '/')) {
+        $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
+      } else {
+        $paramsMethodConfig = array(0 => $paramsMethodConfigStr);
+      }
+    }
 
     if ('get' == $this->method) {
-      if (!empty($paramsMethodConfigStr) && 0 < substr_count($paramsMethodConfigStr, '/')) {
-        $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
-      }
+//      if (0 < substr_count($paramsMethodConfigStr, '/')) {
+//        $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
+//      }
+//      $paramsMethodConfig = array(0 => $paramsMethodConfig);
       Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
       if (count($paramsMethodConfig) != count($this->params)) {
         $str = "wrong ". $this->method ." parameters for route: " . $this->subject . ":" . $this->action.', should be ';
@@ -100,9 +108,7 @@ class Route
       $post = $_POST;
       $postParams = array();
 //      Components::getInstance()->get('logger')->log('$post', $post);
-      if (!empty($paramsMethodConfigStr) && 0 < substr_count($paramsMethodConfigStr, '/')) {
-        $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
-      }
+
       Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
       foreach ($paramsMethodConfig as $identifier) {
         if (!isset($post[$identifier])) {

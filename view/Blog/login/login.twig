@@ -12,7 +12,7 @@
 <body>
   {% block content %}
     <div class="contentWrapper">
-      {% include 'Blog/login/login_rendered.twig' %}
+      {% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered.twig' %}
     </div>
   {% endblock%}
 </body>

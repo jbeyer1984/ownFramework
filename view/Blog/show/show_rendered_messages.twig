@@ -1,0 +1,17 @@
+{#parent is from Blog/show/show_rendered.twig#}
+
+<p></p>
+<table>
+  <tr>
+    {% for identifier, value in messages[0] %}
+      <th>{{ identifier }}</th>
+    {% endfor %}
+  </tr>
+  {% for message in messages %}
+    <tr>
+      {% for identifier, value in message %}
+        <td>{{ value }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>

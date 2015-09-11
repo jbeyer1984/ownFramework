@@ -9,13 +9,8 @@
 {% for user in users %}
   <tr>
   {% for identifier, value in user %}
-    <td>{{ identifier }}: {{ value }}</td>
+    <td>{{ value }}</td>
   {% endfor %}
   </tr>
 {% endfor %}
 </table>
-<form action="/index.php/blog/logout" method="POST">
-  {#<input type="text" name="email" value=""\>#}
-  {#<input type="password" name="password" value=""\>#}
-  <input type="submit" value="logout">
-</form>

@@ -41,21 +41,30 @@ class Router
             'get' => '',
             'post' => 'email/password'
           ],
-          'class' => 'MyApp\src\Tasks\Blog',
+          'class' => 'MyApp\src\Tasks\Blog\Blog',
         ],
         'show' => [
           'params' => [
             'get' => ''
 //            'post' => 'email/password'
           ],
-          'class' => 'MyApp\src\Tasks\Blog',
+          'class' => 'MyApp\src\Tasks\Blog\Blog',
         ],
         'logout' => [
           'params' => [
 //            'get' => ''
-            'post' => ''
+//            'post' => ''
           ],
-          'class' => 'MyApp\src\Tasks\Blog',
+          'class' => 'MyApp\src\Tasks\Blog\Blog',
+        ],
+      ],
+      'message' => [
+        'create' => [
+          'params' => [
+//            'get' => ''
+            'post' => 'message'
+          ],
+          'class' => 'MyApp\src\Tasks\Blog\Message',
         ]
       ]
     ];

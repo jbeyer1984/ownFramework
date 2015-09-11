@@ -3,6 +3,9 @@
 
 namespace MyApp\src\Entities;
 
+use MyApp\src\Tasks\Blog\Message;
+use MyApp\src\Entities\UserRepository;
+
 
 class User
 {
@@ -11,6 +14,13 @@ class User
   private $aftername;
   private $nick;
   private $email;
+
+  private $userRepository;
+
+  /**
+   * @var array(Message)
+   */
+  private $messages;
 
   public function __construct()
   {
@@ -23,6 +33,19 @@ class User
   public function init()
   {
 
+  }
+
+  public function getMessages()
+  {
+    return $this->messages;
+  }
+
+  /**
+   * @param $messages array(MyApp\src\Entities\Message)
+   */
+  public function setMessages($messages)
+  {
+    $this->messages = $messages;
   }
 
   /**
@@ -103,5 +126,21 @@ class User
   public function setEmail($email)
   {
     $this->email = $email;
+  }
+
+  /**
+   * @return UserRepository
+   */
+  public function getUserRepository()
+  {
+    return $this->userRepository;
+  }
+
+  /**
+   * @param $userRepository UserRepository
+   */
+  public function setUserRepository($userRepository)
+  {
+    $this->userRepository = $userRepository;
   }
 }
