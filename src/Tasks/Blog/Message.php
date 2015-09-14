@@ -4,6 +4,7 @@
 namespace MyApp\src\Tasks\Blog;
 
 use MyApp\src\Components\Components;
+use MyApp\src\Factories\MessageFactory;
 use MyApp\src\Tasks\Interfaces\ResetInterface;
 use MyApp\src\Tasks\Tasks;
 
@@ -32,12 +33,8 @@ class Message extends Tasks implements ResetInterface
     }
     Components::getInstance()->get('logger')->log('isset($_SESSION[password])', !isset($_SESSION['password']));
     if (isset($_SESSION['password']) && -1 < strpos($_SESSION['password'], 'nonTheLess')) {
-      $db = Components::getInstance()->get('db');
-      $sql = "insert into Message set id_user=':id_user', message=':message'";
-      $db->execute($sql, array(
-        'id_user' => $_SESSION['id_user'],
-        'message' => $message
-      ));
+      $messageRepository = MessageFactory::getInstance()->retCreatedMessageRepository();
+      $messageRepository->createMessageByUserId($_SESSION['id_user'], $message);
     }
     header('Location: http://ownframework/index.php/blog/show');
     die();

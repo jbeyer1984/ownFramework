@@ -25,6 +25,10 @@ class UserFactory
     return self::$instance;
   }
 
+  /**
+   * @param $id
+   * @return User
+   */
   public function retCreatedUser($id)
   {
     $user = new User();

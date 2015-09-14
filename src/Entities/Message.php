@@ -3,12 +3,15 @@
 
 namespace MyApp\src\Entities;
 
+use MyApp\src\Entities\MessageRepository;
 
 class Message
 {
   private $id;
   private $message;
   private $time;
+
+  private $repository;
 
   public function __construct()
   {
@@ -69,5 +72,21 @@ class Message
   public function setTime($time)
   {
     $this->time = $time;
+  }
+
+  /**
+   * @return MessageRepository
+   */
+  public function getRepository()
+  {
+    return $this->repository;
+  }
+
+  /**
+   * @param $repository MessageRepository
+   */
+  public function setRepository($repository)
+  {
+    $this->repository = $repository;
   }
 }
