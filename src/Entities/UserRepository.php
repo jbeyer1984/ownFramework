@@ -27,9 +27,18 @@ class UserRepository extends Tasks
     $this->db = $this->components->get('db');
   }
 
-  public function getMessages($array)
+  public function getUserData()
   {
-    $sql = "select * from Message where id_user=:id_user";
+    $sql = "select * from User u where u.id=:id_user";
+    $result = $this->db->execute($sql, array(
+      'id_user' => $this->user->getId()
+    ))->getData();
+    return $result;
+  }
+
+  public function getMessages()
+  {
+    $sql = "select u.nick, m.message from Message m  inner join User u on u.id = m.id_user where id_user=:id_user";
     $result = $this->db->execute($sql, array(
       'id_user' => $this->user->getId()
     ))->getData();

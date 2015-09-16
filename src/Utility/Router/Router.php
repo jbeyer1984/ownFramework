@@ -52,8 +52,8 @@ class Router
         ],
         'logout' => [
           'params' => [
-//            'get' => ''
-//            'post' => ''
+            'get' => '',
+            'post' => ''
           ],
           'class' => 'MyApp\src\Tasks\Blog\Blog',
         ],
@@ -81,7 +81,7 @@ class Router
     $class = $routeSettings['class'];
     $obj = new $class();
 
-    Components::getInstance()->get('logger')->log('$route', $route);
+//    Components::getInstance()->get('logger')->log('$route', $route);
     call_user_func_array(array($obj, $route->getAction()), $route->getParams());
     
 //    Components::getInstance()->get('logger')->log('$params', $route->getParams());

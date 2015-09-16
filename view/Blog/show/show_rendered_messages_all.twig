@@ -3,11 +3,11 @@
 <p></p>
 <table>
   <tr>
-    {% for identifier, value in messages[0] %}
+    {% for identifier, value in messagesAll[0] %}
       <th>{{ identifier }}</th>
     {% endfor %}
   </tr>
-  {% for message in messages %}
+  {% for message in messagesAll %}
     <tr>
       {% for identifier, value in message %}
         <td>{{ value }}</td>

@@ -38,6 +38,7 @@ class Route
   public function generate($router)
   {
     $requestUrl = str_replace('/index.php/', '', $_SERVER['REQUEST_URI']);
+    $requestUrl = preg_replace('/\?.*/', '', $requestUrl);
     Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
     $this->method = strtolower($_SERVER['REQUEST_METHOD']);
     $urlParams = explode('/', $requestUrl);
@@ -45,10 +46,10 @@ class Route
     $this->subject = array_shift($urlParams);
     $this->action = array_shift($urlParams);
     $this->params = $urlParams;
-    Components::getInstance()->get('logger')->log('$this', $this);
+//    Components::getInstance()->get('logger')->log('$this', $this);
     $this->verifyRouting($router->getRoutingConfig());
     $this->params = $this->retVerifiedRoutingParams($router->getRoutingConfig());
-    Components::getInstance()->get('logger')->log('$this->params', $this->params);
+//    Components::getInstance()->get('logger')->log('$this->params', $this->params);
   }
 
   /**
@@ -78,11 +79,9 @@ class Route
   {
     $params = array();
     $paramsMethodConfigStr = $routingConfig[$this->subject][$this->action]['params'][$this->method];
-    Components::getInstance()->get('logger')->log('$paramsMethodConfigStr', $paramsMethodConfigStr);
+//    Components::getInstance()->get('logger')->log('$paramsMethodConfigStr', $paramsMethodConfigStr);
     $paramsMethodConfig = array();
 
-//    Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
-//    Components::getInstance()->get('logger')->log('count($paramsMethodConfig)', count($paramsMethodConfig));
     if (!empty($paramsMethodConfigStr)) {
       if (0 < substr_count($paramsMethodConfigStr, '/')) {
         $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
@@ -92,11 +91,7 @@ class Route
     }
 
     if ('get' == $this->method) {
-//      if (0 < substr_count($paramsMethodConfigStr, '/')) {
-//        $paramsMethodConfig = explode('/', $routingConfig[$this->subject][$this->action]['params'][$this->method]);
-//      }
-//      $paramsMethodConfig = array(0 => $paramsMethodConfig);
-      Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
+//      Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
       if (count($paramsMethodConfig) != count($this->params)) {
         $str = "wrong ". $this->method ." parameters for route: " . $this->subject . ":" . $this->action.', should be ';
         $str .= implode(', ', $paramsMethodConfig);
@@ -109,7 +104,7 @@ class Route
       $postParams = array();
 //      Components::getInstance()->get('logger')->log('$post', $post);
 
-      Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
+//      Components::getInstance()->get('logger')->log('$paramsMethodConfig', $paramsMethodConfig);
       foreach ($paramsMethodConfig as $identifier) {
         if (!isset($post[$identifier])) {
           $str = $this->method.' parameter: '.$identifier.' not sent in params, should be '.implode(', ', $paramsMethodConfig);

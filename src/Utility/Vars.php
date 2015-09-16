@@ -1,6 +1,6 @@
 <?php
 
-namespace Myapp\src\Utility;
+namespace MyApp\src\Utility;
 
 use \Exception;
 

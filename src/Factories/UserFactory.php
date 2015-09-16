@@ -1,6 +1,6 @@
 <?php
 
-namespace Myapp\src\Factories;
+namespace MyApp\src\Factories;
 
 use MyApp\src\Entities\User;
 use MyApp\src\Entities\UserRepository;
@@ -39,6 +39,11 @@ class UserFactory
     }
     $userRepository = new UserRepository($user);
     $user->setUserRepository($userRepository);
+    $data = $user->getUserRepository()->getUserData();
+    foreach ($data[0] as $identifier => $value) {
+      $func = 'set'.ucfirst($identifier);
+      $user->$func($value);
+    }
     return $user;
   }
 }

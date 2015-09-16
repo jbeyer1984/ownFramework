@@ -64,14 +64,14 @@ class Db
   {
     foreach ($vars as $identifier => $value)
     {
-      Components::getInstance()->get('logger')->log('$identifier', $identifier);
+//      Components::getInstance()->get('logger')->log('$identifier', $identifier);
       $sql = str_replace(
         ':'.$identifier,
         mysqli_escape_string($this->connection, $value),
         $sql
       );
     }
-    Components::getInstance()->get('logger')->log('$sql', $sql);
+//    Components::getInstance()->get('logger')->log('$sql', $sql);
     $this->executeNoArgs($sql);
   }
 

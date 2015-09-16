@@ -1,4 +1,16 @@
-{% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_blog.twig' %}
-{% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_messages.twig' %}
-{% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_message_create.twig' %}
-{% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_logout.twig' %}
+<div class="left col">
+  <p><h1>all users</h1></p>
+  {% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_blog.twig' %}
+  <p><h1>your messages</h1></p>
+  {% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_messages_own.twig' %}
+  <p><h1>create new messages</h1></p>
+  {% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_message_create.twig' %}
+
+  {% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_logout.twig' %}
+</div>
+<div class="right col">
+  <p><h1>all messages</h1></p>
+  <div class="messages all">
+    {% include 'Blog/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered_messages_all.twig' %}
+  </div>
+</div>

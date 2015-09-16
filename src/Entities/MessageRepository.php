@@ -31,4 +31,11 @@ class MessageRepository extends Tasks
       'message' => $message
     ));
   }
+
+  public function getAllMessagesWithNick()
+  {
+    $sql = "select u.nick, m.message from Message m inner join User u on u.id = m.id_user";
+    $data = $this->db->execute($sql)->getData();
+    return $data;
+  }
 }

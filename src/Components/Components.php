@@ -4,6 +4,7 @@ namespace MyApp\src\Components;
 
 use MyApp\src\Utility\Db;
 use MyApp\src\Utility\Router\Router;
+use MyApp\src\Utility\Session;
 use MyApp\src\Utility\Vars;
 use MyApp\src\Utility\Logger;
 use \Exception;
@@ -53,6 +54,9 @@ class Components
         $router = new Router();
         $router->initRoutingConfig();
         $this->components[$identifier] = $router;
+        break;
+      case 'session' :
+        $this->components[$identifier] = new Session();
         break;
       case 'view' :
         // twig loading

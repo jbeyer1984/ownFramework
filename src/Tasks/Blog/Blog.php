@@ -3,10 +3,12 @@
 
 namespace MyApp\src\Tasks\Blog;
 
+use MyApp\src\Entities\MessageRepository;
 use MyApp\src\Factories\UserFactory;
 use MyApp\src\Tasks\Tasks;
 use MyApp\src\Components\Components;
 use MyApp\src\Tasks\Interfaces\ResetInterface;
+use MyApp\src\Utility\HTTP;
 
 class Blog extends Tasks implements ResetInterface
 {
@@ -37,9 +39,15 @@ class Blog extends Tasks implements ResetInterface
       session_start();
     }
     Components::getInstance()->get('logger')->log('isset($_SESSION[password])', !isset($_SESSION['password']));
-    if (isset($_SESSION['password']) && -1 < strpos($_SESSION['password'], 'nonTheLess')) {
-      $this->show();
-      return;
+    $user = UserFactory::getInstance()->retCreatedUser($_SESSION['id_user']);
+
+    $salt = 'nonTheLess';
+
+    if (isset($_SESSION['password']) && $_SESSION['password'] == hash('sha512', $user->getPassword().$salt) ) {
+//      $this->show();
+//      return;
+      header('Location: http://ownframework/index.php/blog/show');
+      die();
     }
 
     $db = $this->components->get('db');
@@ -79,7 +87,7 @@ class Blog extends Tasks implements ResetInterface
       $session = $_SESSION;
       $session['id_user'] = $result[0]['id'];
       $session['email'] = $email;
-      $session['password'] = $password.$salt;
+      $session['password'] = hash('sha512', $password.$salt);
       // @todo encrypt session data
 
       $_SESSION = $session;
@@ -95,24 +103,7 @@ class Blog extends Tasks implements ResetInterface
 //      ." where email LIKE ':email' and password LIKE ':password'"
 //    ;
     // login/show switch with session
-    if (PHP_SESSION_NONE == session_status()) {
-      Components::getInstance()->get('logger')->log('"hallo"', "hallo");
-      session_start();
-    }
-    Components::getInstance()->get('logger')->log('isset($_SESSION[password])', !isset($_SESSION['password']));
-    if (!isset($_SESSION['password']) || 0 > strpos($_SESSION['password'], 'nonTheLess')) {
-//      if (isset($_COOKIE[session_name()])) {
-        setcookie(session_name(), "", time() - 3600, "/" );
-        //clear session from globals
-        $_SESSION = array();
-        //clear session from disk
-        session_destroy();
-//      }
-      header('Location: http://ownframework/index.php/blog/login');
-      die();
-//      $this->login();
-      return;
-    }
+    $this->components->get('session')->checkLogin();
 
     //user is logged in
     Components::getInstance()->get('logger')->log('$_SESSION', $_SESSION);
@@ -124,19 +115,25 @@ class Blog extends Tasks implements ResetInterface
 //      'id_user' => $_SESSION['id_user']
 //    ))->getData();
     $user = UserFactory::getInstance()->retCreatedUser($_SESSION['id_user']);
-    $resultMessage = $user->getUserRepository()->getMessages();
+    $resultMessagesOwn = $user->getUserRepository()->getMessages();
+    $messageRepo = new MessageRepository();
+    $resultMessagesAll = $messageRepo->getAllMessagesWithNick();
 
-    Components::getInstance()->get('logger')->log('$resultMessage', $resultMessage);
+    Components::getInstance()->get('logger')->log('$resultMessage', $resultMessagesOwn);
 
     $template = 'Blog/'.strtolower(__FUNCTION__).'/'.strtolower(__FUNCTION__);
-    if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
+    
+    $serverRequestMethod = $_SERVER['REQUEST_METHOD'];
+    Components::getInstance()->get('logger')->log('$serverRequestMethod', $serverRequestMethod);
+    if ('post' == strtolower($_SERVER['REQUEST_METHOD']) || isset($_GET['ajax'])) {
       $template .= '_rendered.twig';
     } else {
       $template .= '.twig';
     }
     echo $this->components->get('view')->render($template, array(
       'users' => $resultUser,
-      'messages' => $resultMessage,
+      'messagesOwn' => $resultMessagesOwn,
+      'messagesAll' => $resultMessagesAll,
       'templateContext' => 'show'
     ));
   }
@@ -152,8 +149,8 @@ class Blog extends Tasks implements ResetInterface
       //clear session from disk
       session_destroy();
     }
-    header('Location: http://ownframework/index.php/blog/login');
-    die();
+    HTTP::redirect('blog/login');
+//    die();
 //    $this->login();
   }
 

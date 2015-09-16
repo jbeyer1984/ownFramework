@@ -14,6 +14,7 @@ class User
   private $aftername;
   private $nick;
   private $email;
+  private $password;
 
   private $userRepository;
 
@@ -142,5 +143,21 @@ class User
   public function setUserRepository($userRepository)
   {
     $this->userRepository = $userRepository;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getPassword()
+  {
+    return $this->password;
+  }
+
+  /**
+   * @param mixed $password
+   */
+  public function setPassword($password)
+  {
+    $this->password = $password;
   }
 }
