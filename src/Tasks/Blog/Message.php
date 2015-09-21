@@ -25,12 +25,16 @@ class Message extends Tasks implements ResetInterface
 
   }
 
+  /**
+   * @param $message
+   * @throws \Exception
+   */
   public function create($message)
   {
     $this->components->get('session')->checkLogin();
 
     $messageRepository = MessageFactory::getInstance()->retCreatedMessageRepository();
-    $messageRepository->createMessageByUserId($_SESSION['id_user'], $message);
+    $messageRepository->insertMessageByUserId($_SESSION['id_user'], $message);
 
     HTTP::redirect('blog/show');
   }

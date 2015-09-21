@@ -32,7 +32,7 @@ class Route
   }
 
   /**
-   * @param $router \MyApp\src\Utility\Route\Router
+   * @param $router \MyApp\src\Utility\Router\Router
    * @throws Exception
    */
   public function generate($router)
@@ -78,7 +78,11 @@ class Route
   private function retVerifiedRoutingParams($routingConfig)
   {
     $params = array();
-    $paramsMethodConfigStr = $routingConfig[$this->subject][$this->action]['params'][$this->method];
+    $paramsMethodConfigStr = '';
+    if (isset($routingConfig[$this->subject][$this->action]['params'][$this->method])) {
+      $paramsMethodConfigStr = $routingConfig[$this->subject][$this->action]['params'][$this->method];
+    }
+
 //    Components::getInstance()->get('logger')->log('$paramsMethodConfigStr', $paramsMethodConfigStr);
     $paramsMethodConfig = array();
 
@@ -111,7 +115,7 @@ class Route
           echo $str;
           throw new Exception($str);
         } else {
-          $postParams[$identifier] = $post[$identifier];
+          $postParams[] = $post[$identifier];
         }
       }
       $params = $postParams;

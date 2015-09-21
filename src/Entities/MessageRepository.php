@@ -23,7 +23,7 @@ class MessageRepository extends Tasks
 
   }
 
-  public function createMessageByUserId($idUser, $message)
+  public function insertMessageByUserId($idUser, $message)
   {
     $sql = "insert into Message set id_user=':id_user', message=':message'";
     $this->db->execute($sql, array(
