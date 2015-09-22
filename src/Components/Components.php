@@ -56,7 +56,9 @@ class Components
         $this->components[$identifier] = $router;
         break;
       case 'session' :
-        $this->components[$identifier] = new Session();
+        $session = new Session();
+        $session->init();
+        $this->components[$identifier] = $session;
         break;
       case 'view' :
         // twig loading

@@ -6,6 +6,7 @@ require_once(ROOT_PATH.'/vendor/autoload.php');
 
 use MyApp\src\Utility\Router\Router;
 use MyApp\src\Utility\Router\Route;
+use MyApp\src\Utility\HTTP;
 use \Mockery as m;
 
 class RouteTest extends PHPUnit_Framework_TestCase
@@ -27,7 +28,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
     $this->router = new Router();
     $this->route = new Route();
     $_SERVER['REQUEST_URI'] = '/index.php/blog/login';
-
+    HTTP::reset();
     // params without get or post parameter
     $this->routerConfig = [
       'blog' => [
@@ -41,6 +42,78 @@ class RouteTest extends PHPUnit_Framework_TestCase
     $this->router->setRoutingConfig($this->routerConfig);
   }
 
+  /**
+   * @param $method string
+   */
+  private function checkMethodRouteWithoutMethodParameterInConfig($method)
+  {
+    $_SERVER['REQUEST_METHOD'] = $method;
+    $this->route->generate($this->router);
+    $this->assertEquals($this->route->getParams(), array());
+  }
+
+  /**
+   * @param $method string
+   */
+  private function checkMethodRouteWithGetParameterButEmptyString($method)
+  {
+    $_SERVER['REQUEST_METHOD'] = $method;
+    $this->routerConfig['blog']['login']['params'][strtolower($method)] = '';
+    $this->router->setRoutingConfig($this->routerConfig);
+    $this->route->generate($this->router);
+    $this->assertEquals($this->route->getParams(), array());
+  }
+
+  /**
+   * @param $method string
+   */
+  private function checkMethodRouteWithGetParameters($method)
+  {
+    $_SERVER['REQUEST_METHOD'] = $method;
+    $_SERVER['REQUEST_URI'] = '/index.php/blog/login/test@yes.com/success';
+    $this->routerConfig['blog']['login']['params'][strtolower($method)] = 'email/password';
+    $this->router->setRoutingConfig($this->routerConfig);
+    $this->route->generate($this->router);
+    $params = [
+      0 => 'test@yes.com',
+      1 => 'success'
+    ];
+    $this->assertEquals($this->route->getParams(), $params);
+  }
+
+  /**
+   * @param $method string
+   */
+  private function checkMethodRouteWithPostParameterButEmptyString($method)
+  {
+    $_SERVER['REQUEST_METHOD'] = $method;
+    $this->routerConfig['blog']['login']['params'][strtolower($method)] = '';
+    $this->router->setRoutingConfig($this->routerConfig);
+    $this->route->generate($this->router);
+    $this->assertEquals($this->route->getParams(), array());
+  }
+
+  /**
+   * @param $method string
+   */
+  private function checkMethodRouteWithPostParameters($method)
+  {
+    $_SERVER['REQUEST_METHOD'] = $method;
+    $_POST = [
+      'email' => 'test@yes.com',
+      'password' => 'success'
+    ];
+    $_SERVER['REQUEST_URI'] = '/index.php/blog/login';
+    $this->routerConfig['blog']['login']['params'][strtolower($method)] = 'email/password';
+    $this->router->setRoutingConfig($this->routerConfig);
+    $this->route->generate($this->router);
+    $params = [
+      0 => 'test@yes.com',
+      1 => 'success'
+    ];
+    $this->assertEquals($this->route->getParams(), $params);
+  }
+
   public function testSubjectAndAction()
   {
     $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -51,18 +124,12 @@ class RouteTest extends PHPUnit_Framework_TestCase
 
   public function testGetRouteWithoutGetParameterInConfig()
   {
-    $_SERVER['REQUEST_METHOD'] = 'GET';
-    $this->route->generate($this->router);
-    $this->assertEquals($this->route->getParams(), array());
+    $this->checkMethodRouteWithoutMethodParameterInConfig('GET');
   }
 
   public function testGetRouteWithGetParameterButEmptyString()
   {
-    $_SERVER['REQUEST_METHOD'] = 'GET';
-    $this->routerConfig['blog']['login']['params']['get'] = '';
-    $this->router->setRoutingConfig($this->routerConfig);
-    $this->route->generate($this->router);
-    $this->assertEquals($this->route->getParams(), array());
+    $this->checkMethodRouteWithGetParameterButEmptyString('GET');
   }
 
   public function testGetRouteWithParameters()
@@ -81,35 +148,16 @@ class RouteTest extends PHPUnit_Framework_TestCase
 
   public function testPostRouteWithoutPostParameterInConfig()
   {
-    $_SERVER['REQUEST_METHOD'] = 'POST';
-    $this->route->generate($this->router);
-    $this->assertEquals($this->route->getParams(), array());
+    $this->checkMethodRouteWithoutMethodParameterInConfig('POST');
   }
 
   public function testPostRouteWithPostParameterButEmptyString()
   {
-    $_SERVER['REQUEST_METHOD'] = 'POST';
-    $this->routerConfig['blog']['login']['params']['post'] = '';
-    $this->router->setRoutingConfig($this->routerConfig);
-    $this->route->generate($this->router);
-    $this->assertEquals($this->route->getParams(), array());
+    $this->checkMethodRouteWithPostParameterButEmptyString('POST');
   }
 
   public function testPostRouteWithParameters()
   {
-    $_SERVER['REQUEST_METHOD'] = 'POST';
-    $_POST = [
-      'email' => 'test@yes.com',
-      'password' => 'success'
-    ];
-    $_SERVER['REQUEST_URI'] = '/index.php/blog/login';
-    $this->routerConfig['blog']['login']['params']['post'] = 'email/password';
-    $this->router->setRoutingConfig($this->routerConfig);
-    $this->route->generate($this->router);
-    $params = [
-      0 => 'test@yes.com',
-      1 => 'success'
-    ];
-    $this->assertEquals($this->route->getParams(), $params);
+    $this->checkMethodRouteWithPostParameters('POST');
   }
 }

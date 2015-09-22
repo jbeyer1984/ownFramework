@@ -41,6 +41,10 @@ class Route
     $requestUrl = preg_replace('/\?.*/', '', $requestUrl);
     Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
     $this->method = strtolower($_SERVER['REQUEST_METHOD']);
+    if (isset($_GET['ajax'])) {
+      $this->method = 'post';
+    }
+    Components::getInstance()->get('logger')->log('$this->method', $this->method);
     $urlParams = explode('/', $requestUrl);
     $this->verifyCountOfParams($urlParams);
     $this->subject = array_shift($urlParams);
