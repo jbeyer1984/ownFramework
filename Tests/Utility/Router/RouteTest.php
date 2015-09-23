@@ -43,6 +43,24 @@ class RouteTest extends PHPUnit_Framework_TestCase
   }
 
   /**
+   * Call protected/private method of a class.
+   *
+   * @param object &$object    Instantiated object that we will run method on.
+   * @param string $methodName Method name to call
+   * @param array  $parameters Array of parameters to pass into method.
+   *
+   * @return mixed Method return.
+   */
+  public function invokeMethod(&$object, $methodName, array $parameters = array())
+  {
+    $reflection = new \ReflectionClass(get_class($object));
+    $method = $reflection->getMethod($methodName);
+    $method->setAccessible(true);
+
+    return $method->invokeArgs($object, $parameters);
+  }
+
+  /**
    * @param $method string
    */
   private function checkMethodRouteWithoutMethodParameterInConfig($method)
@@ -114,6 +132,49 @@ class RouteTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($this->route->getParams(), $params);
   }
 
+  public function testGetWithLessParamsInVerifier()
+  {
+    $urlParams = [
+      0 => 'blog',
+      1 => ''
+    ];
+    $this->invokeMethod($this->route, 'verifyCountOfParams', array($urlParams));
+    $urlParams = [
+      0 => 'blog',
+      1 => 'login'
+    ];
+    $this->invokeMethod($this->route, 'verifyCountOfParams', array($urlParams));
+  }
+
+  /**
+   * @expectedException Exception
+   */
+  public function testGetWithLessParamsInVerifierWithExcpetion()
+  {
+    $urlParams = [
+      0 => 'blog'
+    ];
+    $this->invokeMethod($this->route, 'verifyCountOfParams', array($urlParams));
+  }
+
+  /**
+   * @expectedException Exception
+   */
+  public function testGetWithLessParams()
+  {
+    $_SERVER['REQUEST_URI'] = '/index.php';
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $this->routerConfig['blog']['login']['params']['get'] = '';
+    $this->router->setRoutingConfig($this->routerConfig);
+    $this->route->generate($this->router);
+
+    $_SERVER['REQUEST_URI'] = '/index.php/';
+    $this->route->generate($this->router);
+
+    $_SERVER['REQUEST_URI'] = '/index.php/blog';
+    $this->route->generate($this->router);
+  }
+
   public function testSubjectAndAction()
   {
     $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -135,7 +196,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
   public function testGetRouteWithParameters()
   {
     $_SERVER['REQUEST_METHOD'] = 'GET';
-    $_SERVER['REQUEST_URI'] = '/index.php/blog/login/test@yes.com/success';
+    $_SERVER['REQUEST_URI'] = '/index.php/blog/login/test@yes.com/success'; // joke no get with login
     $this->routerConfig['blog']['login']['params']['get'] = 'email/password';
     $this->router->setRoutingConfig($this->routerConfig);
     $this->route->generate($this->router);

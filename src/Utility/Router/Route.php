@@ -33,12 +33,10 @@ class Route
 
   /**
    * @param $router \MyApp\src\Utility\Router\Router
-   * @throws Exception
    */
   public function generate($router)
   {
-    $requestUrl = str_replace('/index.php/', '', $_SERVER['REQUEST_URI']);
-    $requestUrl = preg_replace('/\?.*/', '', $requestUrl);
+    $requestUrl = preg_replace('/(\/index.php\/)|(\/index.php)/', '', $_SERVER['REQUEST_URI']);
     Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
     $this->method = strtolower($_SERVER['REQUEST_METHOD']);
     if (isset($_GET['ajax'])) {
@@ -50,10 +48,8 @@ class Route
     $this->subject = array_shift($urlParams);
     $this->action = array_shift($urlParams);
     $this->params = $urlParams;
-//    Components::getInstance()->get('logger')->log('$this', $this);
     $this->verifyRouting($router->getRoutingConfig());
     $this->params = $this->retVerifiedRoutingParams($router->getRoutingConfig());
-//    Components::getInstance()->get('logger')->log('$this->params', $this->params);
   }
 
   /**
@@ -62,6 +58,7 @@ class Route
    */
   private function verifyCountOfParams($urlParams)
   {
+    Components::getInstance()->get('logger')->log('$urlParams', $urlParams);
     if (2 > count($urlParams)) {
 
       $str =  "This Framework uses at least 2 parameters after index.php<br>";
@@ -70,7 +67,7 @@ class Route
       $str .=  "example would be index.php/task1/show<br>";
       $str .=  "routings are configured in src/Utility/Router.php<br>";
       echo $str;
-      throw new Exception("not enough params declared");
+      throw new Exception($str);
     }
   }
 
