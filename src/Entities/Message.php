@@ -4,8 +4,9 @@
 namespace MyApp\src\Entities;
 
 use MyApp\src\Entities\MessageRepository;
+use MyApp\src\Tasks\Interfaces\ResetInterface;
 
-class Message
+class Message implements ResetInterface
 {
   private $id;
   private $message;

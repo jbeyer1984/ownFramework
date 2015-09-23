@@ -103,6 +103,14 @@ class Route
         echo $str;
         throw new Exception($str);
       }
+      if(isset($routingConfig[$this->subject][$this->action]['rest'])) {
+        $count = 0;
+        $restParams = array();
+        foreach ($paramsMethodConfig as $index => $name) {
+          $restParams[$name] = $this->params[$index];
+        }
+        $this->params = $restParams;
+      }
       $params = $this->params;
     } elseif ('post' == $this->method) {
       $post = $_POST;
@@ -115,8 +123,10 @@ class Route
           $str = $this->method.' parameter: '.$identifier.' not sent in params, should be '.implode(', ', $paramsMethodConfig);
           echo $str;
           throw new Exception($str);
+        } elseif(isset($routingConfig[$this->subject][$this->action]['rest'])) {
+          $postParams[$identifier] = $post[$identifier];
         } else {
-          $postParams[] = $post[$identifier];
+          $postParams = $post[$identifier];
         }
       }
       $params = $postParams;

@@ -75,7 +75,7 @@ class Blog extends Tasks implements ResetInterface
     $sql = "select nick, prename, aftername from User";
     $resultUser = $db->execute($sql)->getData();
     $user = UserFactory::getInstance()->retCreatedUser($_SESSION['id_user']);
-    $resultMessagesOwn = $user->getUserRepository()->getMessages();
+    $resultMessagesOwn = $user->getRepository()->getMessages();
     $messageRepo = new MessageRepository();
     $resultMessagesAll = $messageRepo->getAllMessagesWithNick();
 

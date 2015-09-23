@@ -58,6 +58,23 @@ class Router
           'class' => 'MyApp\src\Tasks\Blog\Blog',
         ],
       ],
+      'restcrud' => [
+        'product' => [
+          'params' => [
+            'get' => 'id',
+            'post' => 'name/owner',
+            'put' => 'id/name/owner',
+            'delete' => 'id'
+          ],
+          'class' => 'MyApp\src\Tasks\RestCrud\Product',
+          'rest' => true,
+        ],
+        'showproducts' => [
+          'params' => [
+          ],
+          'class' => 'MyApp\src\Tasks\RestCrud\Product',
+        ],
+      ],
       'message' => [
         'create' => [
           'params' => [
@@ -78,12 +95,19 @@ class Router
 //    Components::getInstance()->get('logger')->log('$route', $route);
 
     $routeSettings = $this->routingConfig[$route->getSubject()][$route->getAction()];
+    Components::getInstance()->get('logger')->log('$route->getSubject()', $route->getSubject());
+    Components::getInstance()->get('logger')->log('$route->getAction()', $route->getAction());
+    Components::getInstance()->get('logger')->log('$routeSettings', $routeSettings);
     $class = $routeSettings['class'];
     $obj = new $class();
 
 //    Components::getInstance()->get('logger')->log('$route', $route);
-    call_user_func_array(array($obj, $route->getAction()), $route->getParams());
-    
+    if ($routeSettings['rest']) {
+      $action = $route->getAction();
+      $obj->$action($route->getParams());
+    } else {
+      call_user_func_array(array($obj, $route->getAction()), $route->getParams());
+    }
 //    Components::getInstance()->get('logger')->log('$params', $route->getParams());
   }
 

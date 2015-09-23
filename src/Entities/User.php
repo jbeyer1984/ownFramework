@@ -5,9 +5,10 @@ namespace MyApp\src\Entities;
 
 use MyApp\src\Tasks\Blog\Message;
 use MyApp\src\Entities\UserRepository;
+use MyApp\src\Tasks\Interfaces\ResetInterface;
 
 
-class User
+class User implements ResetInterface
 {
   private $id;
   private $prename;
@@ -16,7 +17,7 @@ class User
   private $email;
   private $password;
 
-  private $userRepository;
+  private $repository;
 
   /**
    * @var array(Message)
@@ -132,17 +133,17 @@ class User
   /**
    * @return UserRepository
    */
-  public function getUserRepository()
+  public function getRepository()
   {
-    return $this->userRepository;
+    return $this->repository;
   }
 
   /**
-   * @param $userRepository UserRepository
+   * @param $repository UserRepository
    */
-  public function setUserRepository($userRepository)
+  public function setRepository($repository)
   {
-    $this->userRepository = $userRepository;
+    $this->repository = $repository;
   }
 
   /**

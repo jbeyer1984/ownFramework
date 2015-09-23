@@ -1,0 +1,40 @@
+{#parent is from RestCrud/product/product_rendered.twig#}
+
+<table>
+  <tr>
+    {% for identifier, value in products[0] %}
+      <th>{{ identifier }}</th>
+    {% endfor %}
+  </tr>
+  {% for product in products %}
+    <tr>
+      {% for identifier, value in product %}
+        <td>{{ value }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+
+<form action="/index.php/restcrud/product" method="POST">
+  <table>
+    {% for product in products %}
+    <tr>
+      <td>
+        <label for="productName">product name:</label>
+        <input type="text" name="name" value="{{ product.name }}"\>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="productOwner">product owner:</label>
+        <input type="text" name="owner" value="{{ product.owner }}"\>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="submit" name="method" value="post" \>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</form>

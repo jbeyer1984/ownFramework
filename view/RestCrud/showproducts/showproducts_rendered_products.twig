@@ -1,0 +1,16 @@
+{#parent is from RestCrud/showproducts/showproducts_rendered.twig#}
+
+<table>
+  <tr>
+    {% for identifier, value in products[0] %}
+      <th>{{ identifier }}</th>
+    {% endfor %}
+  </tr>
+  {% for product in products %}
+    <tr>
+      {% for identifier, value in product %}
+        <td>{{ value }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>

@@ -29,7 +29,7 @@ class UserFactory
    * @param $id
    * @return User
    */
-  public function retCreatedUser($id)
+  public function retCreatedUser($id = 0)
   {
     $user = new User();
     if (0 < $id) {
@@ -38,8 +38,8 @@ class UserFactory
       $user->setId(0); // dump user
     }
     $userRepository = new UserRepository($user);
-    $user->setUserRepository($userRepository);
-    $data = $user->getUserRepository()->getUserData();
+    $user->setRepository($userRepository);
+    $data = $user->getRepository()->getUserData();
     foreach ($data[0] as $identifier => $value) {
       $func = 'set'.ucfirst($identifier);
       $user->$func($value);

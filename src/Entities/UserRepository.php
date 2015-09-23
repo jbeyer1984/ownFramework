@@ -3,17 +3,22 @@
 
 namespace MyApp\src\Entities;
 
+use MyApp\src\Tasks\Interfaces\ResetInterface;
 use MyApp\src\Tasks\Tasks;
 use MyApp\src\Entities\User;
+use MyApp\src\Utility\Db;
 use MyApp\src\Components\Components;
 
-class UserRepository extends Tasks
+class UserRepository extends Tasks implements ResetInterface
 {
   /**
    * @var User
    */
   private $user;
 
+  /**
+   * @var Db
+   */
   private $db;
 
   /**
@@ -25,6 +30,15 @@ class UserRepository extends Tasks
     parent::__construct();
     $this->user = $user;
     $this->db = $this->components->get('db');
+  }
+
+  public function reset()
+  {
+  }
+
+  public function init()
+  {
+
   }
 
   public function getUserData()
@@ -43,5 +57,21 @@ class UserRepository extends Tasks
       'id_user' => $this->user->getId()
     ))->getData();
     return $result;
+  }
+
+  /**
+   * @return \MyApp\src\Entities\User
+   */
+  public function getUser()
+  {
+    return $this->user;
+  }
+
+  /**
+   * @param \MyApp\src\Entities\User $user
+   */
+  public function setUser($user)
+  {
+    $this->user = $user;
   }
 }
