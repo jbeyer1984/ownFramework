@@ -32,7 +32,11 @@
     </tr>
     <tr>
       <td>
+        <input type="hidden" name="id" value="{{ product.id }}" \>
+        {#<input type="hidden" name="method" value="post" \>#}
         <input type="submit" name="method" value="post" \>
+        <input type="submit" name="method" value="put" \>
+        <input type="submit" name="method" value="delete" \>
       </td>
     </tr>
     {% endfor %}

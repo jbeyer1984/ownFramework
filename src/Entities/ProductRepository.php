@@ -73,9 +73,14 @@ class ProductRepository extends Tasks implements ResetInterface
     return $data;
   }
 
-  public function updateProduct($id, $productName, $productOwner)
+  public function updateProduct($id)
   {
-
+    $sql = "update Product set name=':name', owner=':owner' where id=:id";
+    $this->db->execute($sql, array(
+      'id' => $id,
+      'name' => $this->product->getName(),
+      'owner' => $this->product->getOwner()
+    ));
   }
 
   public function deleteProduct($id)

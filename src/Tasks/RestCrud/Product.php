@@ -105,6 +105,12 @@ class Product extends Tasks implements ResetInterface
 
   public function update($id, $productName, $productOwner)
   {
+    $product = ProductFactory::getInstance()->retCreatedProduct($id);
+    $product->setName($productName);
+    $product->setOwner($productOwner);
+    $repository = $product->getRepository();
+    $repository->updateProduct($id);
+    HTTP::redirect('restcrud/product/'.$id);
 
   }
 

@@ -7,6 +7,7 @@ require_once(ROOT_PATH.'/vendor/autoload.php');
 use MyApp\src\Utility\Router\Router;
 use MyApp\src\Utility\Router\Route;
 use MyApp\src\Utility\HTTP;
+use MyApp\src\Components\Components;
 use \Mockery as m;
 
 class RouteTest extends PHPUnit_Framework_TestCase
@@ -76,6 +77,10 @@ class RouteTest extends PHPUnit_Framework_TestCase
   private function checkMethodRouteWithGetParameterButEmptyString($method)
   {
     $_SERVER['REQUEST_METHOD'] = $method;
+    if (preg_match('/PUT|DELETE/', $method)) {
+      $_POST['method'] = strtolower($method);
+      $this->routerConfig['blog']['login']['rest'] = true;
+    }
     $this->routerConfig['blog']['login']['params'][strtolower($method)] = '';
     $this->router->setRoutingConfig($this->routerConfig);
     $this->route->generate($this->router);
@@ -85,26 +90,13 @@ class RouteTest extends PHPUnit_Framework_TestCase
   /**
    * @param $method string
    */
-  private function checkMethodRouteWithGetParameters($method)
-  {
-    $_SERVER['REQUEST_METHOD'] = $method;
-    $_SERVER['REQUEST_URI'] = '/index.php/blog/login/test@yes.com/success';
-    $this->routerConfig['blog']['login']['params'][strtolower($method)] = 'email/password';
-    $this->router->setRoutingConfig($this->routerConfig);
-    $this->route->generate($this->router);
-    $params = [
-      0 => 'test@yes.com',
-      1 => 'success'
-    ];
-    $this->assertEquals($this->route->getParams(), $params);
-  }
-
-  /**
-   * @param $method string
-   */
   private function checkMethodRouteWithPostParameterButEmptyString($method)
   {
     $_SERVER['REQUEST_METHOD'] = $method;
+    if (preg_match('/PUT|DELETE/', $method)) {
+      $_POST['method'] = strtolower($method);
+      $this->routerConfig['blog']['login']['rest'] = true;
+    }
     $this->routerConfig['blog']['login']['params'][strtolower($method)] = '';
     $this->router->setRoutingConfig($this->routerConfig);
     $this->route->generate($this->router);
@@ -116,11 +108,15 @@ class RouteTest extends PHPUnit_Framework_TestCase
    */
   private function checkMethodRouteWithPostParameters($method)
   {
-    $_SERVER['REQUEST_METHOD'] = $method;
+    $_SERVER['REQUEST_METHOD'] = $method; // PUT, DELETE doesn't matter here, just lazy to write new function
     $_POST = [
       'email' => 'test@yes.com',
       'password' => 'success'
     ];
+    if (preg_match('/PUT|DELETE/', $method)) {
+      $_POST['method'] = strtolower($method);
+      $this->routerConfig['blog']['login']['rest'] = true;
+    }
     $_SERVER['REQUEST_URI'] = '/index.php/blog/login';
     $this->routerConfig['blog']['login']['params'][strtolower($method)] = 'email/password';
     $this->router->setRoutingConfig($this->routerConfig);
@@ -129,6 +125,13 @@ class RouteTest extends PHPUnit_Framework_TestCase
       0 => 'test@yes.com',
       1 => 'success'
     ];
+    if (preg_match('/PUT|DELETE/', $method)) {
+      $params = [
+        'email' => 'test@yes.com',
+        'password' => 'success'
+      ];
+    }
+    Components::getInstance()->get('logger')->log('$params', $params);
     $this->assertEquals($this->route->getParams(), $params);
   }
 
@@ -220,5 +223,20 @@ class RouteTest extends PHPUnit_Framework_TestCase
   public function testPostRouteWithParameters()
   {
     $this->checkMethodRouteWithPostParameters('POST');
+  }
+
+  public function testPutRouteWithoutPutParameterInConfig()
+  {
+    $this->checkMethodRouteWithoutMethodParameterInConfig('PUT');
+  }
+
+  public function testPutRouteWithPutParameterButEmptyString()
+  {
+    $this->checkMethodRouteWithPostParameterButEmptyString('PUT');
+  }
+
+  public function testPutRouteWithParameters()
+  {
+    $this->checkMethodRouteWithPostParameters('PUT');
   }
 }

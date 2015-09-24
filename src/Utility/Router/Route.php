@@ -4,6 +4,7 @@ namespace MyApp\src\Utility\Router;
 
 use \Exception;
 use MyApp\src\Components\Components;
+use MyApp\src\Utility\HTTP;
 
 class Route
 {
@@ -38,7 +39,7 @@ class Route
   {
     $requestUrl = preg_replace('/(\/index.php\/)|(\/index.php)/', '', $_SERVER['REQUEST_URI']);
     Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
-    $this->method = strtolower($_SERVER['REQUEST_METHOD']);
+    $this->method = HTTP::getMethod(); //strtolower($_SERVER['REQUEST_METHOD']);
     if (isset($_GET['ajax'])) {
       $this->method = 'post';
     }
@@ -50,6 +51,7 @@ class Route
     $this->params = $urlParams;
     $this->verifyRouting($router->getRoutingConfig());
     $this->params = $this->retVerifiedRoutingParams($router->getRoutingConfig());
+    Components::getInstance()->get('logger')->log('$this->params', $this->params);
   }
 
   /**
@@ -58,7 +60,6 @@ class Route
    */
   private function verifyCountOfParams($urlParams)
   {
-    Components::getInstance()->get('logger')->log('$urlParams', $urlParams);
     if (2 > count($urlParams)) {
 
       $str =  "This Framework uses at least 2 parameters after index.php<br>";
@@ -104,7 +105,6 @@ class Route
         throw new Exception($str);
       }
       if(isset($routingConfig[$this->subject][$this->action]['rest'])) {
-        $count = 0;
         $restParams = array();
         foreach ($paramsMethodConfig as $index => $name) {
           $restParams[$name] = $this->params[$index];
@@ -112,7 +112,7 @@ class Route
         $this->params = $restParams;
       }
       $params = $this->params;
-    } elseif ('post' == $this->method) {
+    } else { // all other post, put, delete
       $post = $_POST;
       $postParams = array();
 //      Components::getInstance()->get('logger')->log('$post', $post);
@@ -126,7 +126,7 @@ class Route
         } elseif(isset($routingConfig[$this->subject][$this->action]['rest'])) {
           $postParams[$identifier] = $post[$identifier];
         } else {
-          $postParams = $post[$identifier];
+          $postParams[] = $post[$identifier];
         }
       }
       $params = $postParams;

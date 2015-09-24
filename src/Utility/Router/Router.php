@@ -108,7 +108,6 @@ class Router
     } else {
       call_user_func_array(array($obj, $route->getAction()), $route->getParams());
     }
-//    Components::getInstance()->get('logger')->log('$params', $route->getParams());
   }
 
   /**
