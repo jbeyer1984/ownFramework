@@ -85,7 +85,10 @@ class ProductRepository extends Tasks implements ResetInterface
 
   public function deleteProduct($id)
   {
-
+    $sql = "delete from Product where id=:id";
+    $this->db->execute($sql, array(
+      'id' => $id
+    ));
   }
 
   /**

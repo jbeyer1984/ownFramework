@@ -27,11 +27,10 @@ class Message extends Tasks implements ResetInterface
 
   /**
    * @param $message
-   * @throws \Exception
    */
   public function create($message)
   {
-    $this->components->get('session')->checkLogin();
+    $this->components->get('session')->isLoggedIn();
 
     $messageRepository = MessageFactory::getInstance()->retCreatedMessageRepository();
     $messageRepository->insertMessageByUserId($_SESSION['id_user'], $message);

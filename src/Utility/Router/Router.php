@@ -102,7 +102,7 @@ class Router
     $obj = new $class();
 
 //    Components::getInstance()->get('logger')->log('$route', $route);
-    if ($routeSettings['rest']) {
+    if (isset($routeSettings['rest'])) {
       $action = $route->getAction();
       $obj->$action($route->getParams());
     } else {

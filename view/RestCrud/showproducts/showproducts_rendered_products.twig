@@ -5,12 +5,14 @@
     {% for identifier, value in products[0] %}
       <th>{{ identifier }}</th>
     {% endfor %}
+    <th>edit</th>
   </tr>
   {% for product in products %}
     <tr>
       {% for identifier, value in product %}
         <td>{{ value }}</td>
       {% endfor %}
+      <td><a href="/index.php/restcrud/product/{{ product.id }}">edit</a></td>
     </tr>
   {% endfor %}
 </table>

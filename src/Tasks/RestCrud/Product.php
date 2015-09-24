@@ -54,6 +54,7 @@ class Product extends Tasks implements ResetInterface
     $product = ProductFactory::getInstance()->retCreatedProduct(); // dump user with id = 0
     $repository = $product->getRepository();
     $productsData = $repository->getAllProductsData();
+    array_shift($productsData);
 
     $template = 'RestCrud/'.strtolower(__FUNCTION__).'/'.strtolower(__FUNCTION__);
 
@@ -116,7 +117,9 @@ class Product extends Tasks implements ResetInterface
 
   public function delete($id)
   {
-
+    $repository = ProductFactory::getInstance()->retCreatedProductRepository();
+    $repository->deleteProduct($id);
+    HTTP::redirect('restcrud/showproducts');
   }
 
 
