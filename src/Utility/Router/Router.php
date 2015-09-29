@@ -69,7 +69,7 @@ class Router
           'class' => 'MyApp\src\Tasks\RestCrud\Product',
           'rest' => true,
         ],
-        'showproducts' => [
+        'products' => [
           'params' => [
           ],
           'class' => 'MyApp\src\Tasks\RestCrud\Product',

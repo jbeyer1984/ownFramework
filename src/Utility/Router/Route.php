@@ -38,6 +38,7 @@ class Route
   public function generate($router)
   {
     $requestUrl = preg_replace('/(\/index.php\/)|(\/index.php)/', '', $_SERVER['REQUEST_URI']);
+    $requestUrl = preg_replace('/\?.*/', '', $requestUrl);
     Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
     $this->method = HTTP::getMethod(); //strtolower($_SERVER['REQUEST_METHOD']);
     if (isset($_GET['ajax'])) {

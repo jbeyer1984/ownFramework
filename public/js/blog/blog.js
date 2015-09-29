@@ -7,7 +7,7 @@ var Blog = function() {
 Blog.prototype = {
   init : function () {
     self = this;
-    //this.bindAjaxSubmit();
+    this.bindAjaxSubmit();
     //$('.messages.all').transition({
     //  marginTop: 100,
     //  marginLeft: 300,
@@ -25,9 +25,11 @@ Blog.prototype = {
           paramObj[kv.name] = kv.value;
         });
         paramObj['ajaxCall'] = true;
+        var method = $(this).find("input[type=submit]:focus").attr('value');
+        paramObj['method'] = method;
         $.ajax({
           url: $(this).attr('action'),
-          method: 'post',
+          method: 'POST',
           data: paramObj,
           dataType: 'html',
           success: function (result) {

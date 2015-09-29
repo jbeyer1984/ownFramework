@@ -49,10 +49,9 @@ class Product extends Tasks implements ResetInterface
     }
   }
 
-  public function showproducts()
+  public function products()
   {
-    $product = ProductFactory::getInstance()->retCreatedProduct(); // dump user with id = 0
-    $repository = $product->getRepository();
+    $repository = ProductFactory::getInstance()->retCreatedProductRepository(); // dump user with id = 0
     $productsData = $repository->getAllProductsData();
     array_shift($productsData);
 
@@ -67,7 +66,7 @@ class Product extends Tasks implements ResetInterface
     }
     echo $this->components->get('view')->render($template, array(
       'products' => $productsData,
-      'templateContext' => 'showproducts'
+      'templateContext' => 'products'
     ));
   }
 
