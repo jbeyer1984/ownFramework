@@ -35,9 +35,9 @@ class DocParserTest extends PHPUnit_Framework_TestCase
     public function testRun_thatPass($text, $fragmentsText)
     {
         $this->docParser->setText($text);
-        $this->docParser->run();
-        $numberTagString = $this->docParser->getNumberTagStrings();
-        $lineFragments = implode("\n", $numberTagString);
+        $this->docParser->prepareLinesForConvert();
+        $numberTagStrings = $this->docParser->getNumberTagStrings();
+        $lineFragments = implode("\n", $numberTagStrings);
         
         $expectedFragmentsText = $fragmentsText;
         
@@ -151,6 +151,27 @@ class DocParserTest extends PHPUnit_Framework_TestCase
                 ]
             ],
         ];
+    }
+
+    public function testAll()
+    {
+        $text = <<<EOF
+# so what
+  # so that
+    # so this
+  # easy
+    # something
+# new secion
+EOF;
+        $this->docParser->setText($text);
+        $this->docParser->prepareLinesForConvert();
+        $lines = $this->docParser->getLines();
+        $numberTagStrings = $this->docParser->getNumberTagStrings();
+
+        $this->docParser->convertNumberTagStringsToNumbers($numberTagStrings);
+        $numberStrings = $this->docParser->getNumberStrings();
+
+        $this->docParser->replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings);
     }
 
 }

@@ -53,7 +53,7 @@ class DocParser
         $this->lines = [];
     }
 
-    public function run()
+    public function prepareLinesForConvert()
     {
         $this->parseTextToLines($this->text);
         $this->goThrough($this->lines);
@@ -172,9 +172,20 @@ class DocParser
         return '';
     }
 
-    public function replaceLines()
+    /**
+     * @param $lines
+     * @param $numberTagStrings
+     * @param $numberStrings
+     */
+    public function replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings)
     {
-        
+        foreach ($this->lines as $key => $line) {
+            if (-1 < strpos($line, $this->numberTagStrings[$key])) {
+                $line = str_replace($this->numberTagStrings[$key], $this->numberStrings[$key], $line);
+                $dump = print_r($line, true);
+                error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** $line ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+            }
+        }
     }
 
     /**
