@@ -21,9 +21,14 @@ class DocParser
     private $numberTagStrings;
 
     /**
-     * @var
+     * @var array
      */
     private $numberStrings;
+
+    /**
+     * @var array
+     */
+    private $markedAnkers;
 
     /**
      * @var string
@@ -72,12 +77,28 @@ class DocParser
      */
     protected function goThrough($lines)
     {
-        foreach ($lines as $line) {
+        foreach ($lines as $lineNumber => $line) {
             $beginOfLine = $this->returnFoundNumberTag('#', $line);
             if (!empty($beginOfLine)) {
+                $this->lineNumbersWithTags[$lineNumber] = $lineNumber; 
                 $this->numberTagStrings[] = $beginOfLine;
             }
         }
+    }
+
+    /**
+     * @param string $tag
+     * @param string $line
+     * @return string
+     */
+    protected function returnFoundNumberTag($tag, $line)
+    {
+        $found = [];
+        preg_match('/\s*' . $tag . '/', $line, $found);
+        if (!empty($found)) {
+            return $found[0];
+        }
+        return '';
     }
 
     /**
@@ -88,7 +109,7 @@ class DocParser
         $indents = [0]; // store indents to 
         $countForIndents = []; // store counts for indentation
         $currentNumberStringArray = [];
-
+        
         foreach ($numberTagStrings as $index => $line) {
             $sameIndent = false;
             $indent = false;
@@ -153,23 +174,12 @@ class DocParser
                 $currentNumberStringArray[] = $countForIndents[$count];
             }
 
-            $this->numberStrings[] = preg_replace('/[^ ]/', '', $line) . implode('.', $currentNumberStringArray);
+            if (1 == count($currentNumberStringArray)) {
+                $this->numberStrings[] = preg_replace('/[^ ]/', '', $line) . $currentNumberStringArray[0] . '.';
+            } else {
+                $this->numberStrings[] = preg_replace('/[^ ]/', '', $line) . implode('.', $currentNumberStringArray);   
+            }
         }
-    }
-
-    /**
-     * @param string $tag
-     * @param string $line
-     * @return mixed|string
-     */
-    protected function returnFoundNumberTag($tag, $line)
-    {
-        $found = [];
-        preg_match('/\s*' . $tag . '/', $line, $found);
-        if (!empty($found)) {
-            return $found[0];
-        }
-        return '';
     }
 
     /**
@@ -179,12 +189,18 @@ class DocParser
      */
     public function replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings)
     {
+        if (empty($numberTagStrings)) {
+            return;
+        }
+        
         foreach ($this->lines as $key => $line) {
-            if (-1 < strpos($line, $this->numberTagStrings[$key])) {
-                $line = str_replace($this->numberTagStrings[$key], $this->numberStrings[$key], $line);
-                $dump = print_r($line, true);
-                error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** $line ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+            if (-1 < strpos($line, $numberTagStrings[0])) {
+                $line = str_replace($numberTagStrings[0], $numberStrings[0], $line);
+                array_shift($numberTagStrings);
+                array_shift($numberStrings);
             }
+            $dump = print_r($line, true);
+            error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** $line ***' . PHP_EOL . " = " . $dump . PHP_EOL);
         }
     }
 
@@ -246,7 +262,7 @@ class DocParser
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getNumberStrings()
     {
@@ -254,12 +270,31 @@ class DocParser
     }
 
     /**
-     * @param mixed $numberStrings
+     * @param array $numberStrings
      * @return DocParser
      */
     public function setNumberStrings($numberStrings)
     {
         $this->numberStrings = $numberStrings;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMarkedAnkers()
+    {
+        return $this->markedAnkers;
+    }
+
+    /**
+     * @param array $markedAnkers
+     * @return DocParser
+     */
+    public function setMarkedAnkers($markedAnkers)
+    {
+        $this->markedAnkers = $markedAnkers;
 
         return $this;
     }

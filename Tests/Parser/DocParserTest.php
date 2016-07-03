@@ -28,11 +28,11 @@ class DocParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider run_thatPassProvider
+     * @dataProvider prepareLinesForConvert_thatPassProvider
      * @param $text
      * @param $fragmentsText
      */
-    public function testRun_thatPass($text, $fragmentsText)
+    public function testPrepareLinesForConvert_thatPass($text, $fragmentsText)
     {
         $this->docParser->setText($text);
         $this->docParser->prepareLinesForConvert();
@@ -44,7 +44,7 @@ class DocParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedFragmentsText, $lineFragments);
     }
 
-    public function run_thatPassProvider()
+    public function prepareLinesForConvert_thatPassProvider()
     {
         return [
             [
@@ -156,8 +156,9 @@ class DocParserTest extends PHPUnit_Framework_TestCase
     public function testAll()
     {
         $text = <<<EOF
-# so what
+# *mark* so what
   # so that
+    no tag
     # so this
   # easy
     # something
