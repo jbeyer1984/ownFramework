@@ -27,6 +27,25 @@ class DocParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1.', $imploded);
     }
 
+    public function testMarkedAnkers()
+    {
+        $text =
+<<< EOF
+#;; tag ;;
+EOF
+        ;
+        
+        $this->docParser->setText($text);
+        $this->docParser->prepareLinesForConvert();
+        $markedAnkers = $this->docParser->getMarkedAnkers();
+        
+        $expectedMarkedAnkers = [
+            ';; tag ;;' => '0' // value is here line number
+        ];
+        
+        $this->assertEquals($expectedMarkedAnkers, $markedAnkers);
+    }
+
     /**
      * @dataProvider prepareLinesForConvert_thatPassProvider
      * @param $text
@@ -156,12 +175,12 @@ class DocParserTest extends PHPUnit_Framework_TestCase
     public function testAll()
     {
         $text = <<<EOF
-# *mark* so what
+#;; mark ;; so what
   # so that
     no tag
     # so this
   # easy
-    # something
+    # something ;; mark ;;
 # new secion
 EOF;
         $this->docParser

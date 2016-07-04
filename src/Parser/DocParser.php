@@ -100,12 +100,21 @@ class DocParser
      */
     protected function goThroughLines($lines)
     {
+        $found = [];
         foreach ($lines as $lineNumber => $line) {
             $beginOfLine = $this->returnFoundNumberTag('#', $line);
             if (!empty($beginOfLine)) {
-//                $this->lineNumbersWithTags[$lineNumber] = $lineNumber;
-                $this->numberTagStrings[] = $beginOfLine;
+                $this->numberTagStrings[$lineNumber] = $beginOfLine;
             }
+            
+            if (-1 < strpos($line, '#;;')) {
+                preg_match('/#(;;.+?;;)/', $line, $found);
+                if (!empty($found)) {
+                    $this->markedAnkers[$found[1]] = $lineNumber;
+                    $found = [];
+                }
+            }
+            
         }
     }
 
@@ -133,7 +142,7 @@ class DocParser
         $countForIndents = []; // store counts for indentation
         $currentNumberStringArray = [];
         
-        foreach ($numberTagStrings as $index => $line) {
+        foreach ($numberTagStrings as $lineNumber => $line) {
             $sameIndent = false;
             $indent = false;
             $unindent = false;
@@ -198,9 +207,9 @@ class DocParser
             }
 
             if (1 == count($currentNumberStringArray)) {
-                $this->numberStrings[] = preg_replace('/[^ ]/', '', $line) . $currentNumberStringArray[0] . '.';
+                $this->numberStrings[$lineNumber] = preg_replace('/[^ ]/', '', $line) . $currentNumberStringArray[0] . '.';
             } else {
-                $this->numberStrings[] = preg_replace('/[^ ]/', '', $line) . implode('.', $currentNumberStringArray);   
+                $this->numberStrings[$lineNumber] = preg_replace('/[^ ]/', '', $line) . implode('.', $currentNumberStringArray);   
             }
         }
     }
@@ -216,15 +225,41 @@ class DocParser
             return;
         }
         
-        foreach ($this->lines as $key => $line) {
-            if (empty($numberTagStrings)) {
-                break;
+        $tempNumberString = $numberStrings;
+        
+        $dump = print_r($lines, true);
+        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $lines ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+        
+        
+        foreach ($lines as $lineNumber => $line) {
+            if (!empty($this->markedAnkers)) {
+                if (false !== strpos($line, '#;;')) {
+                    $found = [];
+                    preg_match('/;;.+?;;/', $line, $found);
+                    if (!empty($found)) {
+                        $line = str_replace($found[0], '', $line);    
+                    }
+                } elseif (false !== strpos($line, ';;')) {
+                    $found = [];
+                    preg_match('/;;.+?;;/', $line, $found);
+                    if (!empty($found)) {
+                        $line = str_replace(
+                            $found[0], 
+                            str_replace(' ', '', $tempNumberString[$this->markedAnkers[$found[0]]]),
+                            $line
+                        );
+                        $this->lines[$lineNumber] = $line;
+                    }
+                }    
             }
-            if (-1 < strpos($line, $numberTagStrings[0])) {
-                $line = str_replace($numberTagStrings[0], $numberStrings[0], $line);
-                array_shift($numberTagStrings);
-                array_shift($numberStrings);
-                $this->lines[$key] = $line;
+            
+            if (!empty($numberTagStrings)) {
+                if (-1 < strpos($line, $numberTagStrings[0])) {
+                    $line = str_replace($numberTagStrings[0], $numberStrings[0], $line);
+                    array_shift($numberTagStrings);
+                    array_shift($numberStrings);
+                    $this->lines[$lineNumber] = $line;
+                }
             }
         }
     }

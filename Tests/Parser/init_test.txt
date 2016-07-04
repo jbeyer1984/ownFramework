@@ -9,7 +9,7 @@
   # test in detail
     # pre conditions
       - bootstrap db must exist (is in cloud under NGINX/Server/Config)
-    # create users in db
+    #;; create users in db;;
       - user from bootstrap db will be created
         user is user name
         db name is user name
@@ -17,4 +17,4 @@
     # create user data folder
       - user from bootstrap will be fetched to see whether data folder already exists
         create custom.ini  in data/user/configs/ with template from /bin/NewSetup/template/custom.ini
-        replace password with random password, that has been created before in (# create users in db#)
+        replace password with random password, that has been created before in (;; create users in db;;)
