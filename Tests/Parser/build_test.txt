@@ -1,0 +1,35 @@
+# test build script
+  # parameters
+    - use --help
+    - config files are available (data_config.ini)
+    - optional parameter is -r (for root), will override root in data_config.ini
+    - mandatory parameter is -v (version => tag)
+  # quick test for stefan
+    Es werden checkouts gemacht zu folgenden Ordnern
+      ${root}/backend/${version}
+      ${root}/static/${version}
+    Es muss ein Tag exisitieren, der auf das neue Setup aufbaut, z.B der Build branch backend-mainline .. features/FS9143_build_for_new_setup
+    php /bin/NewSetup/Build/Script.php -r=/your/root -v=/your/version (root and version (tag) must exist)
+    gucke ob das alte Setup noch läuft. (Setzt vorraus, dass eine Db, Vhost etc. existiert)
+  # test in detail
+    # checkout
+      # backend
+        - checkout will be created to ${root}/backend/${version}
+        - copy ${root}/backend/${version}/htdocs/bat/config.dist.ini (if available)
+      # frontend
+        - checkout will be created to ${root}/static/${version}
+    # build json for frontend
+      - build json in ${root}/static/${version}/data/action (action.json, actionTask.json)
+    # replace js occurences in frontend
+      - replace occurences in .json
+        /images, /tmp_images will be like version/images
+      - replace occurences in .js
+        /images, /tmp_images, /resources
+    # copy static files in frontend
+      - copy in ${root}/backend/${version}/htdocs
+        backend, scripts, styles, template, images
+        to folder ${root}/static/${version}
+    # remove php files from static folder
+      - deletes all php files in static
+      
+ 

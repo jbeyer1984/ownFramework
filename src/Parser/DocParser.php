@@ -8,6 +8,16 @@ class DocParser
     /**
      * @var string
      */
+    private $fileToRead;
+
+    /**
+     * @var string
+     */
+    private $fileToWrite;
+
+    /**
+     * @var string
+     */
     private $text;
 
     /**
@@ -58,10 +68,23 @@ class DocParser
         $this->lines = [];
     }
 
+    public function readFromFile()
+    {
+        $this->text = file_get_contents($this->fileToRead);
+    }
+
+    public function writeToFile()
+    {
+        file_put_contents(
+            $this->fileToWrite,
+            implode(PHP_EOL, $this->lines)
+        );
+    }
+
     public function prepareLinesForConvert()
     {
         $this->parseTextToLines($this->text);
-        $this->goThrough($this->lines);
+        $this->goThroughLines($this->lines);
     }
 
     /**
@@ -75,12 +98,12 @@ class DocParser
     /**
      * @param array $lines
      */
-    protected function goThrough($lines)
+    protected function goThroughLines($lines)
     {
         foreach ($lines as $lineNumber => $line) {
             $beginOfLine = $this->returnFoundNumberTag('#', $line);
             if (!empty($beginOfLine)) {
-                $this->lineNumbersWithTags[$lineNumber] = $lineNumber; 
+//                $this->lineNumbersWithTags[$lineNumber] = $lineNumber;
                 $this->numberTagStrings[] = $beginOfLine;
             }
         }
@@ -194,14 +217,54 @@ class DocParser
         }
         
         foreach ($this->lines as $key => $line) {
+            if (empty($numberTagStrings)) {
+                break;
+            }
             if (-1 < strpos($line, $numberTagStrings[0])) {
                 $line = str_replace($numberTagStrings[0], $numberStrings[0], $line);
                 array_shift($numberTagStrings);
                 array_shift($numberStrings);
+                $this->lines[$key] = $line;
             }
-            $dump = print_r($line, true);
-            error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** $line ***' . PHP_EOL . " = " . $dump . PHP_EOL);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileToRead()
+    {
+        return $this->fileToRead;
+    }
+
+    /**
+     * @param string $fileToRead
+     * @return $this
+     */
+    public function setFileToRead($fileToRead)
+    {
+        $this->fileToRead = $fileToRead;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileToWrite()
+    {
+        return $this->fileToWrite;
+    }
+
+    /**
+     * @param string $fileToWrite
+     * @return $this
+     */
+    public function setFileToWrite($fileToWrite)
+    {
+        $this->fileToWrite = $fileToWrite;
+
+        return $this;
     }
 
     /**

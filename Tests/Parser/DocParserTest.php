@@ -164,7 +164,13 @@ class DocParserTest extends PHPUnit_Framework_TestCase
     # something
 # new secion
 EOF;
-        $this->docParser->setText($text);
+        $this->docParser
+            ->setFileToRead(__DIR__ . '/init_test.txt')
+            ->setFileToWrite(__DIR__ . '/init_test_parsed.txt')
+        ;
+//        $this->docParser->setText($text);
+        $this->docParser->readFromFile();
+
         $this->docParser->prepareLinesForConvert();
         $lines = $this->docParser->getLines();
         $numberTagStrings = $this->docParser->getNumberTagStrings();
@@ -173,6 +179,8 @@ EOF;
         $numberStrings = $this->docParser->getNumberStrings();
 
         $this->docParser->replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings);
+
+        $this->docParser->writeToFile();
     }
 
 }

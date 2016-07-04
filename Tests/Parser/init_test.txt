@@ -1,0 +1,20 @@
+# test init script
+  # parameters
+    - use --help
+    - config files are available (data_config.ini, db_config.ini)
+    - optional parameter are -u (root) -p (password) to overwrite config
+  # quick test for stefan
+    - Wird nur für die neuen Nginx Server benutzt.
+    - Das alte Setup ist davon nicht betroffen
+  # test in detail
+    # pre conditions
+      - bootstrap db must exist (is in cloud under NGINX/Server/Config)
+    # create users in db
+      - user from bootstrap db will be created
+        user is user name
+        db name is user name
+        pw is set randomly and will be written later in data/user/configs/custom.ini
+    # create user data folder
+      - user from bootstrap will be fetched to see whether data folder already exists
+        create custom.ini  in data/user/configs/ with template from /bin/NewSetup/template/custom.ini
+        replace password with random password, that has been created before in (# create users in db#)
