@@ -1,4 +1,6 @@
 # test build script
+  # script
+    bin/NewSetup/Build/Script.php
   # parameters
     - use --help
     - config files are available (data_config.ini)
@@ -31,5 +33,3 @@
         to folder ${root}/static/${version}
     # remove php files from static folder
       - deletes all php files in static
-      
- 

@@ -227,18 +227,19 @@ class DocParser
         
         $tempNumberString = $numberStrings;
         
-        $dump = print_r($lines, true);
-        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $lines ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+//        $dump = print_r($lines, true);
+//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $lines ***' . PHP_EOL . " = " . $dump . PHP_EOL);
         
         
         foreach ($lines as $lineNumber => $line) {
             if (!empty($this->markedAnkers)) {
                 if (false !== strpos($line, '#;;')) {
-                    $found = [];
-                    preg_match('/;;.+?;;/', $line, $found);
-                    if (!empty($found)) {
-                        $line = str_replace($found[0], '', $line);    
-                    }
+//                    $found = [];
+//                    preg_match('/;;.+?;;/', $line, $found);
+//                    if (!empty($found)) {
+//                        $line = str_replace($found[0], '', $line);
+                        $line = str_replace(';;', '', $line);
+//                    }
                 } elseif (false !== strpos($line, ';;')) {
                     $found = [];
                     preg_match('/;;.+?;;/', $line, $found);
@@ -252,10 +253,10 @@ class DocParser
                     }
                 }    
             }
-            
+
             if (!empty($numberTagStrings)) {
-                if (-1 < strpos($line, $numberTagStrings[0])) {
-                    $line = str_replace($numberTagStrings[0], $numberStrings[0], $line);
+                if (-1 < strpos($line, reset($numberTagStrings))) {
+                    $line = str_replace(reset($numberTagStrings), reset($numberStrings), $line);
                     array_shift($numberTagStrings);
                     array_shift($numberStrings);
                     $this->lines[$lineNumber] = $line;
