@@ -139,7 +139,7 @@ class DocParser
     public function convertNumberTagStringsToNumbers($numberTagStrings)
     {
         $indents = [0]; // store indents to 
-        $countForIndents = []; // store counts for indentation
+        $countForIndents = []; // store counts for each section indentation
         $currentNumberStringArray = [];
         
         foreach ($numberTagStrings as $lineNumber => $line) {
@@ -181,11 +181,11 @@ class DocParser
                 for ($i = count($unindentResetSets)-1; $i >= 0; $i--) {
                     $fakePopped = $unindentResetSets[$i];
                     if ($resetIndentation) {
-                        $countForIndents[$fakePopped] = 0;
+                        $countForIndents[$fakePopped] = 0; // here is the trick with init count = 0
                     } else {
-                        $countForIndents[$fakePopped] += 1;
+                        $countForIndents[$fakePopped] += 1; // there will be the increment of section number like 1.1, 1.2 e.g.
                     }
-                    $resetIndentation = true;
+                    $resetIndentation = true; // after first section backwards the count will be reset
                 }
             }
 
@@ -206,7 +206,7 @@ class DocParser
                 $currentNumberStringArray[] = $countForIndents[$count];
             }
 
-            if (1 == count($currentNumberStringArray)) {
+            if (1 == count($currentNumberStringArray)) { // implement here strategy for other implementations
                 $this->numberStrings[$lineNumber] = preg_replace('/[^ ]/', '', $line) . $currentNumberStringArray[0] . '.';
             } else {
                 $this->numberStrings[$lineNumber] = preg_replace('/[^ ]/', '', $line) . implode('.', $currentNumberStringArray);   
@@ -227,19 +227,10 @@ class DocParser
         
         $tempNumberString = $numberStrings;
         
-//        $dump = print_r($lines, true);
-//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $lines ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-        
-        
         foreach ($lines as $lineNumber => $line) {
             if (!empty($this->markedAnkers)) {
                 if (false !== strpos($line, '#;;')) {
-//                    $found = [];
-//                    preg_match('/;;.+?;;/', $line, $found);
-//                    if (!empty($found)) {
-//                        $line = str_replace($found[0], '', $line);
-                        $line = str_replace(';;', '', $line);
-//                    }
+                    $line = str_replace(';;', '', $line);
                 } elseif (false !== strpos($line, ';;')) {
                     $found = [];
                     preg_match('/;;.+?;;/', $line, $found);
