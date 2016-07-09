@@ -35,11 +35,13 @@ class Blog extends Tasks implements ResetInterface
   {
     // show/login switch with session
     if (PHP_SESSION_NONE == session_status()) {
-      Components::getInstance()->get('logger')->log('"session will be started"', "true");
+//      Components::getInstance()->get('logger')->log('"session will be started"', "true");
       session_start();
     }
-    Components::getInstance()->get('logger')->log('$email', $email);
+//    Components::getInstance()->get('logger')->log('$email', $email);
+    /** @var \MyApp\src\Utility\Session $session */
     $session = $this->components->get('session');
+    
     if ($session->isLoggedIn()) {
       HTTP::redirect('blog/show');
     } else {
@@ -70,21 +72,24 @@ class Blog extends Tasks implements ResetInterface
     }
 
     //user is logged in
-    Components::getInstance()->get('logger')->log('$_SESSION', $_SESSION);
+//    Components::getInstance()->get('logger')->log('$_SESSION', $_SESSION);
     $db = $this->components->get('db');
     $sql = "select nick, prename, aftername from User";
+//    $dump = print_r($sql, true);
+//    error_log("\n" . '-$- in ' . __FILE__ . ':' . __LINE__ . ' in ' . __METHOD__ . "\n" . '*** $sql ***' . "\n = " . $dump);
     $resultUser = $db->execute($sql)->getData();
     $user = UserFactory::getInstance()->retCreatedUser($_SESSION['id_user']);
     $resultMessagesOwn = $user->getRepository()->getMessages();
     $messageRepo = new MessageRepository();
     $resultMessagesAll = $messageRepo->getAllMessagesWithNick();
+    $resultMessagesByNick = $this->packMessagesByNick($resultMessagesAll);
 
-    Components::getInstance()->get('logger')->log('$resultMessage', $resultMessagesOwn);
+//    Components::getInstance()->get('logger')->log('$resultMessage', $resultMessagesOwn);
 
     $template = 'Blog/'.strtolower(__FUNCTION__).'/'.strtolower(__FUNCTION__);
     
     $serverRequestMethod = HTTP::getMethod();
-    Components::getInstance()->get('logger')->log('$serverRequestMethod', $serverRequestMethod);
+//    Components::getInstance()->get('logger')->log('$serverRequestMethod', $serverRequestMethod);
     if ('post' == $serverRequestMethod || isset($_GET['ajax'])) {
       $template .= '_rendered.twig';
     } else {
@@ -93,7 +98,7 @@ class Blog extends Tasks implements ResetInterface
     echo $this->components->get('view')->render($template, array(
       'users' => $resultUser,
       'messagesOwn' => $resultMessagesOwn,
-      'messagesAll' => $resultMessagesAll,
+      'messagesAllByNick' => $resultMessagesByNick,
       'templateContext' => 'show'
     ));
   }
@@ -101,7 +106,6 @@ class Blog extends Tasks implements ResetInterface
   public function logout()
   {
     if (PHP_SESSION_NONE == session_status()) {
-      Components::getInstance()->get('logger')->log('"hallo"', "hallo");
       session_start();
       setcookie(session_name(), "", time() - 3600, "/" );
       //clear session from globals
@@ -109,10 +113,39 @@ class Blog extends Tasks implements ResetInterface
       //clear session from disk
       session_destroy();
     }
-    HTTP::redirect('blog/login');
+    
+    if ($_POST['ajaxCall']) {
+      $template = 'Blog/'.strtolower('login').'/'.strtolower('login');
+      $template .= '_rendered.twig';
+      echo $this->components->get('view')->render($template, array(
+          'templateContext' => 'login'
+      ));
+      die();
+    }
+//    HTTP::redirect('blog/login');
 //    $this->login();
   }
 
+  /**
+   * Store all messages in array by nickname
+   * 
+   * @param $resultMessagesAll
+   * @return array
+   */
+  private function packMessagesByNick($resultMessagesAll)
+  {
+    $dump = print_r($resultMessagesAll, true);
+    error_log("\n" . '-$- in ' . __FILE__ . ':' . __LINE__ . ' in ' . __METHOD__ . "\n" . '*** $resultMessagesAll ***' . "\n = " . $dump);
+    $nestedMessages = array();
+    foreach ($resultMessagesAll as $row) {
+      $nick = $row['nick'];
+      if (!isset($nestedMessages[$nick])) {
+        $nestedMessages[$nick] = array();
+      }
+      $nestedMessages[$nick][] = $row;
+    }
+    return $nestedMessages;
+  }
 
 
 }
