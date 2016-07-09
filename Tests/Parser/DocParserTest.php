@@ -175,7 +175,7 @@ EOF
     public function testAll()
     {
         $text = <<<EOF
-#;; mark ;; so what
+#;; so what ;;
   # so that
     no tag
     # so this
@@ -183,23 +183,39 @@ EOF
     # something ;; mark ;;
 # new secion
 EOF;
-        $this->docParser
-            ->setFileToRead(__DIR__ . '/workflow.txt')
-            ->setFileToWrite(__DIR__ . '/workflow_parsed.txt')
-        ;
-//        $this->docParser->setText($text);
-        $this->docParser->readFromFile();
+        $files = [];
+        foreach (glob(__DIR__ . '/*.txt') as $file) {
+            if (false === strpos($file, '_parsed')) {
+                $files[] = $file;
+            }
+        }
 
-        $this->docParser->prepareLinesForConvert();
-        $lines = $this->docParser->getLines();
-        $numberTagStrings = $this->docParser->getNumberTagStrings();
+        foreach ($files as $file) {
+            $this->docParser
+//                ->setFileToRead($fileToRead)
+//                ->setFileToWrite($fileToWrite);
+            ;
+//            $this->docParser->readFromFile();
 
-        $this->docParser->convertNumberTagStringsToNumbers($numberTagStrings);
-        $numberStrings = $this->docParser->getNumberStrings();
+            $this->docParser
+                ->setText($text)
+                ->setFileToWrite('/var/www/ownFramework/public/text/textOut.txt');
+            ;
 
-        $this->docParser->replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings);
 
-        $this->docParser->writeToFile();
+            $this->docParser->prepareLinesForConvert();
+            $lines = $this->docParser->getLines();
+            $numberTagStrings = $this->docParser->getNumberTagStrings();
+
+            $this->docParser->convertNumberTagStringsToNumbers($numberTagStrings);
+            $numberStrings = $this->docParser->getNumberStrings();
+
+            $this->docParser->replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings);
+
+            $this->docParser->writeToFile();
+
+            break;
+        }
     }
 
 }
