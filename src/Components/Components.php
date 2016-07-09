@@ -2,6 +2,7 @@
 
 namespace MyApp\src\Components;
 
+use MyApp\src\Tasks\PhpUnit\EntityManager;
 use MyApp\src\Utility\Db;
 use MyApp\src\Utility\Router\Router;
 use MyApp\src\Utility\Session;
@@ -41,6 +42,9 @@ class Components
       return $this->components[$identifier];  
     }
     switch ($identifier) {
+      case 'entity_manager':
+        $this->compoents[$identifier] = new EntityManager();
+        break;
       case 'vars' :
         $this->components[$identifier] = new Vars();
         break;

@@ -8,6 +8,8 @@ Blog.prototype = {
   init : function () {
     self = this;
     this.bindAjaxSubmit();
+    //this.bindCopyContent();
+    this.bindMarkContent();
     //$('.messages.all').transition({
     //  marginTop: 100,
     //  marginLeft: 300,
@@ -25,21 +27,64 @@ Blog.prototype = {
           paramObj[kv.name] = kv.value;
         });
         paramObj['ajaxCall'] = true;
-        var method = $(this).find("input[type=submit]:focus").attr('value');
-        paramObj['method'] = method;
         $.ajax({
           url: $(this).attr('action'),
-          method: 'POST',
+          method: 'post',
           data: paramObj,
           dataType: 'html',
           success: function (result) {
             $('.contentWrapper').html(result);
-            console.log('result', result);
+            // console.log('result', result);
+            var lastCopyButton = $('input.copy-content').last();
             self.bindAjaxSubmit();
+            lastCopyButton.click(function () { //@todo should be changed
+              self.markCopyContent(lastCopyButton);  
+            });
           }
         });
       });
     })
+  },
+  bindCopyContent : function () {
+    $('input.copy-content').on('click', function () {
+      self.copyContentFromElement($(this));
+    });
+  },
+  copyContentFromElement : function (el)  {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    var item = $(el).parent().next();
+    $temp.val(item.text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+  },
+  bindMarkContent : function () {
+    $('input.copy-content').on('click', function () {
+      self.markCopyContent($(this));
+    });
+  },
+  markCopyContent : function (el) {
+    var item = $(el).parent().next();
+    self.selectElementText(item[0]); // this is not needed at mom but useful
+  },
+  // Selects text inside an element node.
+  selectElementText : function (el) {
+    self.removeTextSelections();
+    if (document.selection) {
+      var range = document.body.createTextRange();
+      range.moveToElementText(el);
+      range.select();
+    }
+    else if (window.getSelection) {
+      var range = document.createRange();
+      range.selectNode(el);
+      window.getSelection().addRange(range);
+    }
+  },
+  // Deselects all text in the page.
+  removeTextSelections : function () {
+    if (document.selection) document.selection.empty();
+    else if (window.getSelection) window.getSelection().removeAllRanges();
   }
 };
 

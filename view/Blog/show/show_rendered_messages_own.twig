@@ -1,17 +1,30 @@
 {#parent is from Blog/show/show_rendered.twig#}
 
 <p></p>
-<table>
-  <tr>
-    {% for identifier, value in messagesOwn[0] %}
-      <th>{{ identifier }}</th>
-    {% endfor %}
-  </tr>
-  {% for message in messagesOwn %}
-    <tr>
-      {% for identifier, value in message %}
-        <td>{{ value }}</td>
-      {% endfor %}
-    </tr>
-  {% endfor %}
-</table>
+{#<table>#}
+  {#<tr>#}
+    {#{% for identifier, value in messagesOwn[0] %}#}
+      {#<th>{{ identifier }}</th>#}
+    {#{% endfor %}#}
+  {#</tr>#}
+  {#{% for message in messagesOwn %}#}
+    {#<tr>#}
+      {#{% for identifier, value in message %}#}
+        {#<td>{{ value|raw }}</td>#}
+      {#{% endfor %}#}
+    {#</tr>#}
+  {#{% endfor %}#}
+{#</table>#}
+
+<div class="border_dashed">{{ messagesOwn[0]['nick'] }} Messages:</div>
+
+{% for message in messagesOwn %}
+  {% if message.message|raw is not empty %}
+    <div class="own-message_container border_big">
+      <div class="copy-content">
+        <input type="button" class="copy-content" value="mark content" name="copy_content">
+      </div>
+      <div class="message">{{ message.message|raw }}</div>  
+    </div>
+  {% endif %}
+{% endfor %}

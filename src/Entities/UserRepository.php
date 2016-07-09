@@ -47,7 +47,10 @@ class UserRepository extends Tasks implements ResetInterface
     $result = $this->db->execute($sql, array(
       'id_user' => $this->user->getId()
     ))->getData();
-    return $result;
+    if (!isset($result[0])) {
+      return [];
+    }
+    return $result[0];
   }
 
   public function getMessages()
@@ -56,6 +59,9 @@ class UserRepository extends Tasks implements ResetInterface
     $result = $this->db->execute($sql, array(
       'id_user' => $this->user->getId()
     ))->getData();
+    foreach ($result as $key => $row) {
+      $result[$key]['message'] = nl2br($result[$key]['message']);
+    }
     return $result;
   }
 
