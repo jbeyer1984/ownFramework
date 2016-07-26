@@ -81,6 +81,11 @@ class DocParser
         );
     }
 
+    public function builtOutputText()
+    {
+        return implode(PHP_EOL, $this->lines);
+    }
+
     public function prepareLinesForConvert()
     {
         $this->parseTextToLines($this->text);

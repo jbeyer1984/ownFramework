@@ -35,6 +35,15 @@ class Router
           'class' => 'MyApp\src\Tasks\Task1',
         ]
       ],
+      'docparser' => [
+        'start' => [
+          'params' => [
+            'get' => '',
+            'post' => 'input_string'
+          ],
+          'class' => 'MyApp\src\Tasks\DocParser\DocParserController',
+        ],
+      ],
       'blog' => [
         'login' => [
           'params' => [
