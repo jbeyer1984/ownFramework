@@ -34,12 +34,6 @@ class DocParserController extends Tasks
       $template .= '.twig';
     }
     
-    $dump = print_r($outputString, true);
-    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $outputString ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-    
-    $dump = print_r($template, true);
-    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $template ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-    
     echo $this->components->get('view')->render($template, array(
       'templateContext' => 'start',
       'outputString' => $outputString,
