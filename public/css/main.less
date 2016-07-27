@@ -1,4 +1,51 @@
 .col {
   float: left;
+  &.right {
+    margin-left: 10px;
+  }
+}
+.border {
+  border: 1px solid black;
+}
+.border_big {
+  border: 2px solid black;
+}
+.border_dashed {
+  border: 1px dashed black;
+}
+
+.own-message_container {
+  margin-top: 10px;
+  max-width: 300px;
+  .copy-content {
+    top: 0;
+    right: 0;
+    float: right;
+    background: green;
+  }
+  
+}
+
+.all-message_container {
+  .copy-content {
+    top: 0;
+    right: 0;
+    float: right;
+    background: green;
+  }
+}
+
+
+.bold {
+  font-weight: bold; 
+}
+
+@media (max-width: 490px) {
+  .col {
+    float: none;
+    &.right {
+      margin-left: 0px;
+    }
+  }
 }
 

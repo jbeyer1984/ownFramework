@@ -31,17 +31,30 @@ class MessageRepository extends Tasks implements ResetInterface
 
   public function insertMessageByUserId($idUser, $message)
   {
-    $sql = "insert into Message set id_user=':id_user', message=':message'";
+    $sql = "
+      INSERT INTO Message
+        SET id_user=':id_user',
+        message=':message',
+        `date`= NOW()
+    ";
     $this->db->execute($sql, array(
       'id_user' => $idUser,
-      'message' => $message
+      'message' => $message,
     ));
   }
 
   public function getAllMessagesWithNick()
   {
-    $sql = "select u.nick, m.message from Message m inner join User u on u.id = m.id_user";
+    $sql = "
+      SELECT u.nick, m.message, m.date
+      FROM Message m
+      INNER JOIN User u ON u.id = m.id_user
+      ORDER BY m.date DESC, u.nick
+    ";
     $data = $this->db->execute($sql)->getData();
+    foreach ($data as $key => $row) {
+      $data[$key]['message'] = nl2br($data[$key]['message']);
+    }
     return $data;
   }
 

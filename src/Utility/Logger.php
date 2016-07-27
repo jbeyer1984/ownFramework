@@ -11,9 +11,7 @@ class Logger
   
   public function log($identifier, $var)
   {
-    ob_start();
-    print_r($var);
-    $print = ob_get_clean();
-    error_log("$$identifier = " . $print, 0, '/tmp/error.log');
+    $print = print_r($var, true);
+    error_log("$$identifier = " . $print);
   }
 }

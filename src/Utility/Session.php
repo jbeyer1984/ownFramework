@@ -26,7 +26,7 @@ class Session
   public function isLoggedIn()
   {
     if (PHP_SESSION_NONE == session_status()) {
-      Components::getInstance()->get('logger')->log('"session will start"', "true");
+//      Components::getInstance()->get('logger')->log('"session will start"', "true");
       session_start();
     }
 
@@ -82,7 +82,7 @@ class Session
     // set session data for user
     $salt = 'nonTheLess';
     $session = $_SESSION;
-    $session['id_user'] = $result[0]['id'];
+    $session['id_user'] = (isset($result[0]['id'])) ? $result[0]['id'] : 0;
     $session['email'] = $email;
     $session['password'] = hash('sha512', $password.$salt);
     // @todo encrypt session data

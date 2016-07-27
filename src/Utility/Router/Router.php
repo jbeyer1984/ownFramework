@@ -35,6 +35,15 @@ class Router
           'class' => 'MyApp\src\Tasks\Task1',
         ]
       ],
+      'docparser' => [
+        'start' => [
+          'params' => [
+            'get' => '',
+            'post' => 'input_string'
+          ],
+          'class' => 'MyApp\src\Tasks\DocParser\DocParserController',
+        ],
+      ],
       'blog' => [
         'login' => [
           'params' => [
@@ -47,6 +56,7 @@ class Router
           'params' => [
             'get' => ''
 //            'post' => 'email/password'
+            
           ],
           'class' => 'MyApp\src\Tasks\Blog\Blog',
         ],
@@ -69,7 +79,7 @@ class Router
           'class' => 'MyApp\src\Tasks\RestCrud\Product',
           'rest' => true,
         ],
-        'products' => [
+        'showproducts' => [
           'params' => [
           ],
           'class' => 'MyApp\src\Tasks\RestCrud\Product',
@@ -91,18 +101,21 @@ class Router
   public function route()
   {
     $route = new Route();
+    
+    $uri = $_SERVER['REQUEST_URI'];
     $route->generate($this);
 //    Components::getInstance()->get('logger')->log('$route', $route);
 
     $routeSettings = $this->routingConfig[$route->getSubject()][$route->getAction()];
-    Components::getInstance()->get('logger')->log('$route->getSubject()', $route->getSubject());
-    Components::getInstance()->get('logger')->log('$route->getAction()', $route->getAction());
-    Components::getInstance()->get('logger')->log('$routeSettings', $routeSettings);
+//    Components::getInstance()->get('logger')->log('$route->getSubject()', $route->getSubject());
+//    Components::getInstance()->get('logger')->log('$route->getAction()', $route->getAction());
+//    Components::getInstance()->get('logger')->log('$routeSettings', $routeSettings);
     $class = $routeSettings['class'];
     $obj = new $class();
 
 //    Components::getInstance()->get('logger')->log('$route', $route);
-    if (isset($routeSettings['rest'])) {
+    
+    if (isset($routeSettings['rest']) && $routeSettings['rest']) {
       $action = $route->getAction();
       $obj->$action($route->getParams());
     } else {

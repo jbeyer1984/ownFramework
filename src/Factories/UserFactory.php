@@ -40,7 +40,7 @@ class UserFactory
     $userRepository = new UserRepository($user);
     $user->setRepository($userRepository);
     $data = $user->getRepository()->getUserData();
-    foreach ($data[0] as $identifier => $value) {
+    foreach ($data as $identifier => $value) {
       $func = 'set'.ucfirst($identifier);
       $user->$func($value);
     }

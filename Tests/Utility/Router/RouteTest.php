@@ -152,7 +152,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
   /**
    * @expectedException Exception
    */
-  public function testGetWithLessParamsInVerifierWithExcpetion()
+  public function testGetWithLessParamsInVerifierWithException()
   {
     $urlParams = [
       0 => 'blog'

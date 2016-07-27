@@ -37,14 +37,14 @@ class Route
    */
   public function generate($router)
   {
-    $requestUrl = preg_replace('/(\/index.php\/)|(\/index.php)/', '', $_SERVER['REQUEST_URI']);
-    $requestUrl = preg_replace('/\?.*/', '', $requestUrl);
-    Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
+    $requestUrl = preg_replace('/(\/.*index.php\/)|(\/.*index.php)/', '', $_SERVER['REQUEST_URI']);
+//    Components::getInstance()->get('logger')->log('$requestUrl', $requestUrl);
     $this->method = HTTP::getMethod(); //strtolower($_SERVER['REQUEST_METHOD']);
     if (isset($_GET['ajax'])) {
       $this->method = 'post';
+      $requestUrl = str_replace('?ajax=true', '', $requestUrl);
     }
-    Components::getInstance()->get('logger')->log('$this->method', $this->method);
+//    Components::getInstance()->get('logger')->log('$this->method', $this->method);
     $urlParams = explode('/', $requestUrl);
     $this->verifyCountOfParams($urlParams);
     $this->subject = array_shift($urlParams);
@@ -52,7 +52,7 @@ class Route
     $this->params = $urlParams;
     $this->verifyRouting($router->getRoutingConfig());
     $this->params = $this->retVerifiedRoutingParams($router->getRoutingConfig());
-    Components::getInstance()->get('logger')->log('$this->params', $this->params);
+//    Components::getInstance()->get('logger')->log('$this->params', $this->params);
   }
 
   /**

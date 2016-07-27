@@ -8,6 +8,7 @@ use MyApp\src\Factories\MessageFactory;
 use MyApp\src\Tasks\Interfaces\ResetInterface;
 use MyApp\src\Tasks\Tasks;
 use MyApp\src\Utility\HTTP;
+use MyApp\src\Utility\Session;
 
 class Message extends Tasks implements ResetInterface
 {
@@ -27,11 +28,13 @@ class Message extends Tasks implements ResetInterface
 
   /**
    * @param $message
+   * @throws \Exception
    */
   public function create($message)
   {
-    $this->components->get('session')->isLoggedIn();
-
+    /** @var Session $session */
+    $session = $this->components->get('session');
+    $session->isLoggedIn();
     $messageRepository = MessageFactory::getInstance()->retCreatedMessageRepository();
     $messageRepository->insertMessageByUserId($_SESSION['id_user'], $message);
 

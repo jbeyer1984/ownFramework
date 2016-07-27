@@ -10,8 +10,24 @@
   {% for message in messagesAll %}
     <tr>
       {% for identifier, value in message %}
-        <td>{{ value }}</td>
+        <td>{{ value|raw }}</td>
       {% endfor %}
     </tr>
   {% endfor %}
 </table>
+
+{% for nick, messages in messagesAllByNick %}
+  <div class="border_dashed">
+    {{ nick }} Messages:  
+  </div>
+  <div class="all-message_container">
+    {% for message in messages %}
+      <div class="border_big message">
+        <div class="copy-content">
+          <input type="button" class="copy-content" value="mark content" name="copy_content">
+        </div>
+        <div class="message">{{ message.message|raw }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endfor %}

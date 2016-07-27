@@ -1,0 +1,12 @@
+{#parent is from DocParser/index/index_rendered.twig#}
+
+{% set rows = 20 %}
+{% set cols = 50 %}
+<form action="/index.php/docparser/start" method="POST">
+  <textarea id="input_string" name="input_string" rows="{{ rows }}" cols="{{ cols }}">
+  </textarea>
+  <input type="submit" value="parse">
+</form>
+<textarea id="output_string" name="output_string" rows="{{ rows }}" cols="{{ cols }}">
+{{ outputString }}
+</textarea>
