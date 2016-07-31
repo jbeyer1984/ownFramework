@@ -2,8 +2,9 @@ requirejs.config({
   baseUrl: '/public/js',
   //waitSeconds: 15,
   paths: {
-    jquery: 'lib/jquery'
-    ,app: 'app'
+    jquery: 'lib/jquery',
+    jsface: 'lib/jsface',
+    app: 'app'
   }
 });
 
