@@ -5,14 +5,14 @@
   <meta charset="UTF-8">
   <title>Document</title>
   <script src="/public/js/jquery-1.11.3.js"></script>
-  <script data-main="/public/js/main" src="/public/js/lib/require.js"></script>
   {% block customJavascript %}
+    {#<script src="/public/js/blog/blog.js"></script>#}
   {% endblock %}
 </head>
 <body>
 {% block content %}
   <div class="contentWrapper">
-    {% include 'DocParser/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered.twig' %}
+    {% include 'Tools/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered.twig' %}
   </div>
 {% endblock %}
 </body>
