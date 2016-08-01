@@ -1,6 +1,6 @@
 <?php
 
-namespace MyApp\src\Tasks\DocParser;
+namespace MyApp\src\Tasks\Parser;
 
 use MyApp\src\Parser\DocParser;
 use MyApp\src\Tasks\Tasks;
@@ -29,13 +29,14 @@ class DocParserController extends Tasks
     
     $template = 'DocParser/' . strtolower(__FUNCTION__) . '/' . strtolower(__FUNCTION__);
     if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
-      $template .= '_rendered.twig';
+      $template .= '_output_rendered.twig';
     } else {
       $template .= '.twig';
     }
     
     echo $this->components->get('view')->render($template, array(
       'templateContext' => 'start',
+      'inputString' => $inputString,
       'outputString' => $outputString,
     ));
   }

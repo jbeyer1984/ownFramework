@@ -41,7 +41,25 @@ class Router
             'get' => '',
             'post' => 'input_string'
           ],
-          'class' => 'MyApp\src\Tasks\DocParser\DocParserController',
+          'class' => 'MyApp\src\Tasks\Parser\DocParserController',
+        ],
+      ],
+      'evalparser' => [
+        'start' => [
+          'params' => [
+            'get' => '',
+            'post' => 'input_string'
+          ],
+          'class' => 'MyApp\src\Tasks\Parser\EvalParserController',
+        ],
+      ],
+      'tools' => [
+        'overview' => [
+          'params' => [
+            'get' => '',
+            'post' => ''
+          ],
+          'class' => 'MyApp\src\Tasks\Tools\ToolsController',
         ],
       ],
       'blog' => [

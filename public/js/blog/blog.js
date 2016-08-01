@@ -17,7 +17,25 @@ Blog.prototype = {
     //  easing: 'in'
     //});
   },
+  bindAjaxKeyPressSubmit : function() {
+    var self = this;
+    var pressedKeyTimes = 0;
+    var $input = $('input');
+    var isAltDown = false;
+    var isCombinationAltS = false;
+    $('body').on('keydown', function (e) {
+      isCombinationAltS = isAltDown && ('s' == e.key);
+
+      isAltDown = ('Alt' == e.key);
+      
+      if (isCombinationAltS) {
+        $input.trigger('submit');
+      }
+    });
+  },
   bindAjaxSubmit : function () {
+    this.bindAjaxKeyPressSubmit();
+    
     var $form = $('form');
     var paramObj = {};
     $form.each( function (index, item) {
