@@ -64,7 +64,7 @@ class Session
     }
     // show/login switch with session
     if (PHP_SESSION_NONE == session_status()) {
-      Components::getInstance()->get('logger')->log('"hallo"', "hallo");
+//      Components::getInstance()->get('logger')->log('"hallo"', "hallo");
       session_start();
     }
     $db = Components::getInstance()->get('db');
@@ -77,7 +77,7 @@ class Session
       'password' => $password
     ))->getData();
 
-    Components::getInstance()->get('logger')->log('$----------result', $result);
+//    Components::getInstance()->get('logger')->log('$----------result', $result);
 
     // set session data for user
     $salt = 'nonTheLess';

@@ -14,9 +14,6 @@ class EvalParserController extends Tasks
 
   public function start($inputString = '')
   {
-    $dump = print_r("herer", true);
-    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** "herer" ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-    
     $evalParser = new EvalParser();
     $evalParser
         ->init()
@@ -24,7 +21,7 @@ class EvalParserController extends Tasks
     ;
     
     $evalParser->evalIt();
-    
+
     $outputString = $evalParser->getOutputString();
     
     $template = 'EvalParser/' . strtolower(__FUNCTION__) . '/' . strtolower(__FUNCTION__);

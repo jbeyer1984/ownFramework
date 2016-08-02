@@ -34,8 +34,6 @@ class EvalParser
     ob_start();
     eval("$this->inputString");
     $this->outputString = ob_get_clean();
-    
-    
   }
 
   /**
