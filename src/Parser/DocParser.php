@@ -131,7 +131,9 @@ class DocParser
     protected function returnFoundNumberTag($tag, $line)
     {
         $found = [];
-        preg_match('/\s*' . $tag . '/', $line, $found);
+        
+        $reg = '/(^\s*)' . $tag . '/';
+        preg_match($reg, $line, $found);
         if (!empty($found)) {
             return $found[0];
         }
@@ -232,20 +234,33 @@ class DocParser
         
         $tempNumberString = $numberStrings;
         
+        $dump = print_r($tempNumberString, true);
+        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $tempNumberString ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+        
+        $dump = print_r($this->markedAnkers, true);
+        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $this->markedAnkers ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+        
         foreach ($lines as $lineNumber => $line) {
             if (!empty($this->markedAnkers)) {
                 if (false !== strpos($line, '#;;')) {
                     $line = str_replace(';;', '', $line);
                 } elseif (false !== strpos($line, ';;')) {
                     $found = [];
-                    preg_match('/;;.+?;;/', $line, $found);
+                    preg_match_all('/(;;.+?;;)/', $line, $found);
                     if (!empty($found)) {
-                        $line = str_replace(
-                            $found[0], 
-                            str_replace(' ', '', $tempNumberString[$this->markedAnkers[$found[0]]]),
-                            $line
-                        );
-                        $this->lines[$lineNumber] = $line;
+                        $dump = print_r($found, true);
+                        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $found ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+                        
+                        foreach ($found as $innerFound) {
+                            foreach ($innerFound as $oneFound) {
+                                $line = str_replace(
+                                    $oneFound,
+                                    str_replace(' ', '', $tempNumberString[$this->markedAnkers[$oneFound]]),
+                                    $line
+                                );
+                                $this->lines[$lineNumber] = $line;        
+                            }
+                        }
                     }
                 }    
             }
