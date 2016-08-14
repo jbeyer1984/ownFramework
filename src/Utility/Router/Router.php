@@ -53,6 +53,15 @@ class Router
           'class' => 'MyApp\src\Tasks\Parser\EvalParserController',
         ],
       ],
+      'beforerenderparser' => [
+        'start' => [
+          'params' => [
+            'get' => '',
+            'post' => ''
+          ],
+          'class' => 'MyApp\src\Tasks\Parser\BeforeRenderParserController',
+        ],
+      ],
       'tools' => [
         'overview' => [
           'params' => [

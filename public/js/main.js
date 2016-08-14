@@ -12,4 +12,10 @@ define("main", function (require) {
   // var $ = require('lib/jquery');
   var Parser = require('app/controller/parser'); 
   var parser = new Parser();
+
+  var ParserMove = require('app/controller/parser_move');
+  var parserMove = new ParserMove();
+
+  var BeforeRenderParser = require('app/controller/before_render_parser');
+  var beforeRenderParser = new BeforeRenderParser();
 });

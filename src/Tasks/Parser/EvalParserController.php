@@ -2,6 +2,7 @@
 
 namespace MyApp\src\Tasks\Parser;
 
+use MyApp\src\Entities\Snippets\SnippetsRepository;
 use MyApp\src\Parser\EvalParser;
 use MyApp\src\Tasks\Tasks;
 
@@ -23,6 +24,12 @@ class EvalParserController extends Tasks
     $evalParser->evalIt();
 
     $outputString = $evalParser->getOutputString();
+
+    $snippetsGrouped = $this->fetchSnippetsGrouped();
+    
+    $dump = print_r($snippetsGrouped, true);
+    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $snippetsGrouped ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+    
     
     $template = 'EvalParser/' . strtolower(__FUNCTION__) . '/' . strtolower(__FUNCTION__);
     if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
@@ -35,6 +42,28 @@ class EvalParserController extends Tasks
       'templateContext' => 'start',
       'inputString' => $inputString,
       'outputString' => $outputString,
+      'snippetsGrouped' => $snippetsGrouped,
     ));
+  }
+
+  public function fetchSnippetsGrouped()
+  {
+    $snippetsRepository = new SnippetsRepository();
+    $snippetsRepository
+      ->init()
+    ;
+    $data = $snippetsRepository->getSnippetsData();
+    
+    $preparedData = [];
+    foreach ($data as $row) {
+      $evalGroupString = $row['eval_group_name'];
+      if (empty($preparedData[$evalGroupString])) {
+        $preparedData[$evalGroupString] = [];
+      }
+      $preparedData[$evalGroupString]['eval_template_name'] = $row['eval_template_name'];
+      $preparedData[$evalGroupString]['eval_template_snippet'] = $row['eval_template_snippet'];
+    }
+    
+    return $preparedData;
   }
 }

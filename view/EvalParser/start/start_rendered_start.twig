@@ -1,13 +1,25 @@
 {#parent is from DocParser/index/index_rendered.twig#}
-
+{#<div class="left">#}
+  
+{#</div>#}
 {% set rows = 20 %}
 {% set cols = 50 %}
-<form class="parser input" action="/index.php/evalparser/start" method="POST">
+<div class="wrapper">
+  <div class="left">
+    <form class="parser input" action="/index.php/evalparser/start" method="POST">
   <textarea id="input_string" name="input_string" rows="{{ rows }}" cols="{{ cols }}">
 {{ inputString }}
   </textarea>
-  <input type="submit" value="parse">
-</form>
-<div class="parser output">
-  {% include 'EvalParser/' ~ templateContext ~ '/'  ~ templateContext ~ '_output_rendered.twig' %}
+      <input type="submit" value="parse">
+    </form>
+  </div>
+  <div class="left">
+    {% include 'EvalParser/' ~ templateContext ~ '/'  ~ templateContext ~ '_rendered_snippets.twig' %}
+  </div>
+</div>
+<br>
+<div class="none">
+  <div class="parser output">
+    {#{% include 'EvalParser/' ~ templateContext ~ '/'  ~ templateContext ~ '_output_rendered.twig' %}#}
+  </div>  
 </div>

@@ -1,0 +1,22 @@
+{#parent is from EvalParser/start/start_rendered.twig#}
+<div class="snippets">
+  {% for group, snippets in snippetsGrouped %}
+    group: {{ group }}<br>
+    <ul>
+    {% for description, snippet in snippets %}
+      {% if description == 'eval_template_name' %}
+        <li class="move_able">
+          {#{{ description }}: {{ snippet }}<br>#}
+          {{ snippet }}<br>
+        </li>
+      {% endif %}
+
+      {% if description == 'eval_template_snippet' %}
+        <li class="hidden">
+          {{ snippet }}
+        </li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+  {% endfor %}
+</div>
