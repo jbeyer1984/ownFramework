@@ -1,6 +1,6 @@
 <?php
 
-namespace MyApp\src\Parser\Wrapper\IFace;
+namespace MyApp\src\Parser\BeforeRender\Wrapper\IFace;
 
 interface IdentifierInterface
 {

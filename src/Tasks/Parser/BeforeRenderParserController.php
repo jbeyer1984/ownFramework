@@ -4,7 +4,7 @@
 namespace MyApp\src\Tasks\Parser;
 
 
-use MyApp\src\Parser\BeforeRenderParser;
+use MyApp\src\Parser\BeforeRender\BeforeRenderParser;
 use MyApp\src\Tasks\Tasks;
 
 class BeforeRenderParserController extends Tasks
@@ -17,23 +17,26 @@ class BeforeRenderParserController extends Tasks
   public function start()
   {
     
-    $beforeRenderParser = BeforeRenderParser::initialized();
+    $beforeRenderParser = new BeforeRenderParser();
     $text = '
-$varOne = 1;
-$varTwo = 2;
+$this->view->whatFirst = 0;
 
-$this->view->varOne = $varTwo;
-$this->view->varTwo = $varOne;
+$this->render();
+
+$this->view->whatFirst = 1;
+$this->view->whatSecond = 1;
+
+$this->render();
+
+$this->view->whatFirst = 2;
+$this->view->whatSecond = 2;
+$this->view->whatThird = 2;
+
 $this->render();
 ';
 
-    $allLines = $beforeRenderParser->explodeText($text);
-    $beforeRenderParser->parse($allLines);
-    $outputString = nl2br($beforeRenderParser->getOutputText());
-    
-    $dump = print_r($outputString, true);
-    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $outputString ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-    
+    $outputText = $beforeRenderParser->parseStrategyTemplates($text);
+    $outputString = nl2br($outputText);
     
     $template = 'BeforeRenderParser/' . strtolower(__FUNCTION__) . '/' . strtolower(__FUNCTION__);
     if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {

@@ -1,9 +1,9 @@
 <?php
 
-namespace MyApp\src\Parser\Wrapper;
+namespace MyApp\src\Parser\BeforeRender\Wrapper;
 
-use MyApp\src\Parser\Text\IFace\ManipulatedStringInterface;
-use MyApp\src\Parser\Wrapper\IFace\IdentifierInterface;
+use MyApp\src\Parser\BeforeRender\Wrapper\Text\IFace\ManipulatedStringInterface;
+use MyApp\src\Parser\BeforeRender\Wrapper\IFace\IdentifierInterface;
 
 abstract class AbstractWrapper implements IdentifierInterface, ManipulatedStringInterface
 {

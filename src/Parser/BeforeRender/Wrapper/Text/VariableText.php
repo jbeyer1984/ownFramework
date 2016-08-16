@@ -1,12 +1,12 @@
 <?php
 
-namespace MyApp\src\Parser\Text;
+namespace MyApp\src\Parser\BeforeRender\Wrapper\Text;
 
 use Exception;
-use MyApp\src\Parser\Text\IFace\ManipulatedStringInterface;
-use MyApp\src\Parser\Wrapper\AbstractWrapper;
-use MyApp\src\Parser\Wrapper\IFace\IdentifierInterface;
-use MyApp\src\Parser\Wrapper\IFace\WrapperInterface;
+use MyApp\src\Parser\BeforeRender\Wrapper\Text\IFace\ManipulatedStringInterface;
+use MyApp\src\Parser\BeforeRender\Wrapper\AbstractWrapper;
+use MyApp\src\Parser\BeforeRender\Wrapper\IFace\IdentifierInterface;
+use MyApp\src\Parser\BeforeRender\Wrapper\IFace\WrapperInterface;
 
 class VariableText implements IdentifierInterface, WrapperInterface, ManipulatedStringInterface
 {
@@ -50,20 +50,20 @@ class VariableText implements IdentifierInterface, WrapperInterface, Manipulated
 
   /**
    * @param AbstractWrapper $wrapper
-   * @param string $str
    * @throws Exception
    */
-  public function addWrapper($wrapper, $str)
+  public function addWrapper($wrapper)
   {
-    if (empty($str)) {
-      throw new Exception('wrapper should have an identifier ($str)');
-    }
+//    if (empty($str)) {
+//      throw new Exception('wrapper should have an identifier ($str)');
+//    }
     
-    if (!empty($str)) {
+//    if (!empty($str)) {
 //      $wrapper->setIdentifier($this->identifier);
-      $this->wrappers[$str] = $wrapper;
-      $this->wrapperOrder[] = $str;
-    }
+    $className = get_class($wrapper);
+      $this->wrappers[$className] = $wrapper;
+      $this->wrapperOrder[] = $className;
+//    }
   }
 
   public function deleteWrapper($str)

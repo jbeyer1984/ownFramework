@@ -1,6 +1,6 @@
 <?php
 
-namespace MyApp\src\Parser\Text\IFace;
+namespace MyApp\src\Parser\BeforeRender\Wrapper\Text\IFace;
 
 interface PrePostWrapInterface
 {

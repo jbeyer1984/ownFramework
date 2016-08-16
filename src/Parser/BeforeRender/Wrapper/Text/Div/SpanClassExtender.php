@@ -1,9 +1,9 @@
 <?php
 
-namespace MyApp\src\Parser\Text\Div;
+namespace MyApp\src\Parser\BeforeRender\Wrapper\Text\Div;
 
-use MyApp\src\Parser\Text\IFace\PrePostWrapInterface;
-use MyApp\src\Parser\Wrapper\IFace\IdentifierInterface;
+use MyApp\src\Parser\BeforeRender\Wrapper\Text\IFace\PrePostWrapInterface;
+use MyApp\src\Parser\BeforeRender\Wrapper\IFace\IdentifierInterface;
 
 class SpanClassExtender implements IdentifierInterface, PrePostWrapInterface
 {

@@ -40,6 +40,9 @@
     margin-left: 0px;
   }
 }
+.bold {
+  font-weight: bold;
+}
 .left {
   float: left;
 }
@@ -60,4 +63,34 @@
 }
 .view_highlight {
   color: red;
+}
+.one_time {
+  border: 1px solid blue;
+}
+.underline {
+  text-decoration: underline;
+}
+.bright_10 {
+  opacity: 0.1;
+}
+.bright_25 {
+  opacity: 0.25;
+}
+.bright_50 {
+  opacity: 0.5;
+}
+.bright_50::after {
+  content: "2";
+  vertical-align: -4px;
+  font-size: 80%;
+  color: blue;
+}
+.bright_75 {
+  opacity: 0.75;
+}
+.bright_75::after {
+  content: "3";
+  vertical-align: -4px;
+  font-size: 80%;
+  color: blue;
 }
