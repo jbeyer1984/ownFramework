@@ -91,28 +91,36 @@
   text-decoration: underline;
 }
 
-.bright_10 {
-  opacity: 0.1;
+.double_assignment {
+  border: 1px dashed red;
 }
 
-.bright_25 {
-  opacity: 0.25;
+.bright_10 {
+  text-decoration: blink;
+  &::after {
+    content: "1";
+    vertical-align: -4px; font-size : 80%;color : blue;
+  }
 }
 
 .bright_50 {
-  opacity: 0.5;
-}
-
-.bright_50::after {
-  content: "2";
-  vertical-align: -4px; font-size : 80%;color : blue;
+  &::after {
+    content: "2";
+    vertical-align: -4px; font-size : 80%;color : blue;
+  }
 }
 
 .bright_75 {
-  opacity: 0.75;
+  &::after {
+    content: "3";
+    vertical-align: -4px; font-size : 80%;color : blue;
+  }
+    
 }
 
-.bright_75::after {
-  content: "3";
-  vertical-align: -4px; font-size : 80%;color : blue;
+.highlight_var {
+  &::before {
+    content: "o-o";
+    vertical-align: +4px; font-size : 80%;color : blue;
+  }
 }

@@ -26,7 +26,7 @@ class BeforeRenderParserTest extends PHPUnit_Framework_TestCase
   {
     $text = '
 $varOne = 1;
-$varTwo = 2;
+  $varTwo = 2;
 
 $this->view->varOne = $varTwo;
 $this->view->varTwo = $varOne;
@@ -48,7 +48,7 @@ $this->render();
     $text = '
 $this->view->whatFirst = 0;
 
-$this->render();
+  $this->render();
 
 $this->view->whatFirst = 1;
 $this->view->whatSecond = 1;
@@ -74,14 +74,15 @@ $this->render();
     
     $strategyParserTemplate->parse();
     
-    $viewArray = $strategyParserTemplate->getStrategy()->getViewArray();
+    $viewArray = [];
     
-    $text = $viewParserStrategy->getOutputText();
+    if ($strategyParserTemplate->getStrategy() instanceof ViewParserStrategy) {
+      /** @var ViewParserStrategy $strategy */
+      $strategy = $strategyParserTemplate->getStrategy();
+      $viewArray = $strategy->getViewArray();
+    }
     
-    $dump = print_r($text, true);
-    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $text ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-    
-
+    $text = str_replace("\n", PHP_EOL, $viewParserStrategy->getOutputText());
   }
 }
 

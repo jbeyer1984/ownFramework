@@ -3,7 +3,7 @@
 
 namespace MyApp\src\Parser\BeforeRender\Wrapper;
 
-use MyApp\src\Parser\BeforeRender\Wrapper\Text\Div\SpanClassExtender;
+use MyApp\src\Parser\BeforeRender\Wrapper\Text\Span\SpanClassExtender;
 
 class ViewWrapper extends AbstractWrapper
 {

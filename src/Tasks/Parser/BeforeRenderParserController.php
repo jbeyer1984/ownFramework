@@ -21,8 +21,12 @@ class BeforeRenderParserController extends Tasks
     $text = '
 $this->view->whatFirst = 0;
 
-$this->render();
+if (true) {
+  $var0 = 0;
+  $this->render();
+}
 
+$this->view->whatFirst = 1;
 $this->view->whatFirst = 1;
 $this->view->whatSecond = 1;
 
@@ -36,7 +40,7 @@ $this->render();
 ';
 
     $outputText = $beforeRenderParser->parseStrategyTemplates($text);
-    $outputString = nl2br($outputText);
+    $outputString = $outputText;
     
     $template = 'BeforeRenderParser/' . strtolower(__FUNCTION__) . '/' . strtolower(__FUNCTION__);
     if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {

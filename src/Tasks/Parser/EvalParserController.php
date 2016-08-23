@@ -27,10 +27,6 @@ class EvalParserController extends Tasks
 
     $snippetsGrouped = $this->fetchSnippetsGrouped();
     
-    $dump = print_r($snippetsGrouped, true);
-    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $snippetsGrouped ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-    
-    
     $template = 'EvalParser/' . strtolower(__FUNCTION__) . '/' . strtolower(__FUNCTION__);
     if ('post' == strtolower($_SERVER['REQUEST_METHOD'])) {
       $template .= '_output_rendered.twig';

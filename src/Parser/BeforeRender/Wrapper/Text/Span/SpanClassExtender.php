@@ -1,6 +1,6 @@
 <?php
 
-namespace MyApp\src\Parser\BeforeRender\Wrapper\Text\Div;
+namespace MyApp\src\Parser\BeforeRender\Wrapper\Text\Span;
 
 use MyApp\src\Parser\BeforeRender\Wrapper\Text\IFace\PrePostWrapInterface;
 use MyApp\src\Parser\BeforeRender\Wrapper\IFace\IdentifierInterface;
@@ -29,7 +29,7 @@ class SpanClassExtender implements IdentifierInterface, PrePostWrapInterface
   {
     $cssClasses = implode(' ', $cssClassArray);
     $spanStr = <<< TXT
-<span class="{$cssClasses}" identifier"{$this->identifier}">
+<span class="{$cssClasses}" identifier="{$this->identifier}">
 TXT;
     
     $this->manipulatedString .= $spanStr;

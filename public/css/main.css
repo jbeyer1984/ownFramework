@@ -70,14 +70,17 @@
 .underline {
   text-decoration: underline;
 }
+.double_assignment {
+  border: 1px dashed red;
+}
 .bright_10 {
-  opacity: 0.1;
+  text-decoration: blink;
 }
-.bright_25 {
-  opacity: 0.25;
-}
-.bright_50 {
-  opacity: 0.5;
+.bright_10::after {
+  content: "1";
+  vertical-align: -4px;
+  font-size: 80%;
+  color: blue;
 }
 .bright_50::after {
   content: "2";
@@ -85,12 +88,15 @@
   font-size: 80%;
   color: blue;
 }
-.bright_75 {
-  opacity: 0.75;
-}
 .bright_75::after {
   content: "3";
   vertical-align: -4px;
+  font-size: 80%;
+  color: blue;
+}
+.highlight_var::before {
+  content: "o-o";
+  vertical-align: 4px;
   font-size: 80%;
   color: blue;
 }

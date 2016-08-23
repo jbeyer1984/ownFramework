@@ -68,7 +68,8 @@ class Components
         // twig loading
         $loader = new \Twig_Loader_Filesystem(ROOT_PATH . 'view');
         $twig = new \Twig_Environment($loader, array(
-          'cache' => ROOT_PATH . '/cache/compilation_cache',
+//          'cache' => ROOT_PATH . '/cache/compilation_cache',
+          'cache' => false,
           'auto_reload' => true
         ));
         $this->components[$identifier] = $twig;

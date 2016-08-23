@@ -48,13 +48,13 @@ class StrategyParserTemplate
 
       // look in view Array whether there is one occurrence and then decide
       if (isset($viewArray[$varName])) {
-        if (1 == count($viewArray[$varName])) {
+        if (1 == count($viewArray[$varName])) { // view variable is only used one time
           // @todo wrap with class and make bold
           $viewWrapper = ViewWrapper::initialized(['click_able', 'one_time', 'bold', 'view_highlight']);
           $strategy->wrapVar($varName, $lineNum, $viewWrapper);
 
-          $imploded = implode("", $strategy->getAllLines());
-          $strategy->setOutputText($imploded);
+//          $imploded = implode("", $strategy->getAllLines());
+//          $strategy->setOutputText($imploded);
         }
 
         $oneAssignmentInView = true;
@@ -78,14 +78,19 @@ class StrategyParserTemplate
                 $viewVarFoundInRenderSection = true;
                 $brightness += 25;
                 $brightnessCssClass = 'bright_' . $brightness;
-//                $viewWrapper = ViewWrapper::initialized(['click_able', $brightnessCssClass,'underline', 'bold', 'view_highlight']);
                 $occurrences++;
               }
               
-              if ($occurrences > 1) {
-                // wrap with overwrite highlighting
-                
-                $viewWrapper = ViewWrapper::initialized(['click_able', $brightnessCssClass, 'underline', 'bold', 'view_highlight']);
+              if (1 < $occurrences) {
+                if (1 < count(array_intersect($tempViewArray, $linesOfRenderSection))) { // double assignment
+                  $viewWrapper = ViewWrapper::initialized([
+                    'click_able', $brightnessCssClass, 'underline', 'bold', 'view_highlight', 'double_assignment'
+                  ]);
+                } else {
+                  $viewWrapper = ViewWrapper::initialized([
+                    'click_able', $brightnessCssClass, 'underline', 'bold', 'view_highlight'
+                  ]);
+                }
               }
               
               if ($viewVarFoundInRenderSection) {
@@ -98,7 +103,7 @@ class StrategyParserTemplate
           // @todo try to solve situation
         }
 
-        $imploded = implode("", $strategy->getAllLines());
+        $imploded = implode(PHP_EOL, $strategy->getAllLines());
         $strategy->setOutputText($imploded);
 
         if (!$oneAssignmentInView) {
