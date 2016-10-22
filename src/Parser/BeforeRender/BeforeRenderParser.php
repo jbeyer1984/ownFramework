@@ -3,6 +3,7 @@
 
 namespace MyApp\src\Parser\BeforeRender;
 
+use MyApp\src\Parser\BeforeRender\Strategy\AbstractParserStrategy;
 use MyApp\src\Parser\BeforeRender\Strategy\ViewParserStrategy;
 use MyApp\src\Parser\BeforeRender\Template\StrategyParserTemplate;
 
@@ -20,7 +21,8 @@ class BeforeRenderParser
   public function parseStrategyTemplates($text)
   { 
     $strategyParserTemplate = new StrategyParserTemplate();
-    
+      
+    /** @var AbstractParserStrategy $viewParserStrategy */
     $viewParserStrategy = ViewParserStrategy::initialized();
     $allLines = $viewParserStrategy->explodeText($text);
     
