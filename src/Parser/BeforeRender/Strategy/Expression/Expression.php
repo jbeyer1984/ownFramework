@@ -73,6 +73,9 @@ class Expression extends ExpressionAbstract
          * $var->attribute->functionName($whatEver);
          * $var->getClass()->functionName($whatEver);
          ************/
+        
+        // create new if for text getRight() and getLeft() null, with text consists '='
+        
         if (null == $expression->getRight() && strpos($expression->getLeft(), '=')) {
             Evaluator::getInstance()->pushConditionArray(0, '$ = $');
 

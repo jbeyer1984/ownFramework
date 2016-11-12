@@ -8,6 +8,11 @@ class LineExpression extends ExpressionAbstract
 {
 
     /**
+     * @var
+     */
+    protected $line;
+    
+    /**
      * @var array
      */
     protected $potentialVars;
@@ -53,6 +58,25 @@ class LineExpression extends ExpressionAbstract
     public function setPotentialVars($potentialVars)
     {
         $this->potentialVars = $potentialVars;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLine()
+    {
+        return $this->line;
+    }
+
+    /**
+     * @param mixed $line
+     * @return LineExpression
+     */
+    public function setLine($line)
+    {
+        $this->line = $line;
 
         return $this;
     }

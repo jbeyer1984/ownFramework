@@ -31,7 +31,7 @@ abstract class AbstractParserStrategy  implements ParserStrategyInterface
   {
   }
 
-  public function init()
+  protected function init()
   {
     $this->inputText = '';
     $this->allLines = [];

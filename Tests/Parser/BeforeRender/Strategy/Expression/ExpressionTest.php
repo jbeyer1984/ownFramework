@@ -6,6 +6,7 @@ require_once(VAR_WWW . '/src/bootstrap.php');
 require_once(ROOT_PATH . '/vendor/autoload.php');
 
 use MyApp\src\Evaluator\Evaluator;
+use MyApp\src\Parser\BeforeRender\AssignmentRenderParser;
 use MyApp\src\Parser\BeforeRender\Strategy\Expression\Expression;
 use MyApp\src\Parser\BeforeRender\Strategy\Expression\LineExpression;
 
@@ -59,10 +60,6 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
 
         $this->expression->evaluate($varDelegateExpression);
 
-//        $createdHmlPage = Evaluator::getInstance()->getPrintedConditionArray();
-//        $dump = print_r($createdHmlPage, true);
-//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $createdHmlPage ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-
         $this->assertEquals($lineExpression, $varDelegateExpression->getChild()->getLineExpression());
         $this->assertEquals('$testRight', $varDelegateExpression->getChild()->getLeft());
         $this->assertEquals('foo->determine', $varDelegateExpression->getChild()->getRight());
@@ -101,5 +98,13 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $varDelegateExpression->getChild()->getChild()->getLeft());
         $this->assertEquals('determine($varOne, $varTwo)', $varDelegateExpression->getChild()->getChild()->getRight());
         $this->assertEquals(['$varOne', '$varTwo'], $lineExpression->getPotentialVars());
+    }
+
+    public function testInGeneral()
+    {
+        $assignmentParser = new AssignmentRenderParser();
+        $assignmentParser->parseStrategyTemplates('$test->attr->getFunc()');
+        
+        $evalPrint = Evaluator::getInstance()->getPrintedConditionArray();
     }
 }

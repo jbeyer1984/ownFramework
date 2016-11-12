@@ -3,13 +3,12 @@
 
 namespace MyApp\src\Parser\BeforeRender\Strategy;
 
-use MyApp\src\Parser\BeforeRender\Strategy\IFace\ParserStrategyInterface;
+use MyApp\src\Parser\BeforeRender\Strategy\Expression\Expression;
+use MyApp\src\Parser\BeforeRender\Strategy\Expression\LineExpression;
 use MyApp\src\Parser\BeforeRender\Wrapper\AbstractWrapper;
-use MyApp\src\Parser\BeforeRender\Wrapper\IFace\WrapperInterface;
 use MyApp\src\Parser\BeforeRender\Wrapper\Text\VariableText;
-use MyApp\src\Parser\BeforeRender\Wrapper\ViewWrapper;
 
-class ViewParserStrategy extends AbstractParserStrategy
+class ViewAssignmentStrategy extends AbstractParserStrategy
 {
 
   /**
@@ -67,30 +66,27 @@ class ViewParserStrategy extends AbstractParserStrategy
     $renderCount = 0;
 
     foreach ($allLines as $lineNum => $line) {
-//            preg_match('/.*$this->view->(\w\+)\s*=/', $line, $viewVar);
-      preg_match('/.*\$this->view->(\w+)\s*=/', $line, $viewVarMatch);
-      if (!empty($viewVarMatch)) {
-        array_shift($viewVarMatch);
-        $viewVar = $viewVarMatch[0]; // get rid of first whole match
-
-        $lineReferenceView[$lineNum] = $viewVar; // @todo think about double existence
-        if (empty($viewArray[$viewVar])) {
-          $viewArray[$viewVar] = [];
-        }
-        $viewArray[$viewVar][] = $lineNum;
-      }
-      if (false !== strpos($line, 'render()')) {
-        $renderCount++;
-      } else {
-        if (!isset($this->renderLinesArray[$renderCount])) {
-          $this->renderLinesArray[$renderCount] = [];
-        }
-        $this->renderLinesArray[$renderCount][] = $lineNum;
-      }
+        // create expression tree for each line
+        $lineExpression = new LineExpression();
+        $lineExpression->setLine($line);
+        $expression = new Expression();
+        $expression
+            ->init()
+//            ->setIdentifier('$test')
+//            ->setAssignment(true)
+//            ->setLeft('$testLeft')
+            ->setRight($line)
+//            ->setRight('$testRight->foo->determine')
+            ->setLineExpression($lineExpression);
+        ;
+        
+        $expressionTree = new Expression();
+        $expressionTree->evaluate($expression);
+        
     }
 
-    $this->setViewArray($viewArray);
-    $this->setLineReferenceView($lineReferenceView);
+//    $this->setViewArray($viewArray);
+//    $this->setLineReferenceView($lineReferenceView);
   }
 
   /**
@@ -107,11 +103,11 @@ class ViewParserStrategy extends AbstractParserStrategy
     $variableText->apply();
 
     $allLines = $this->getAllLines();
-    $allLines[$lineNum] = str_replace(
-      '$this->view->' . $varName,
-      '$this->view->' . $variableText->getManipulatedString(),
-      $allLines[$lineNum]
-    );
+//    $allLines[$lineNum] = str_replace(
+//      '$this->view->' . $varName,
+//      '$this->view->' . $variableText->getManipulatedString(),
+//      $allLines[$lineNum]
+//    );
 
     $this->setAllLines($allLines);
   }
