@@ -11,7 +11,7 @@ class LineExpression extends ExpressionAbstract
      * @var
      */
     protected $line;
-    
+
     /**
      * @var array
      */
@@ -37,7 +37,7 @@ class LineExpression extends ExpressionAbstract
                 $this->potentialVars,
                 $identifier
             );
-            
+
             return;
         }
         $this->potentialVars[] = $identifier;

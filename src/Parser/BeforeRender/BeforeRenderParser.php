@@ -10,26 +10,26 @@ use MyApp\src\Parser\BeforeRender\Template\StrategyParserTemplate;
 class BeforeRenderParser
 {
 
-  public function __construct()
-  {
-  }
+    public function __construct()
+    {
+    }
 
-  /**
-   * @param string $text
-   * @return string
-   */
-  public function parseStrategyTemplates($text)
-  { 
-    $strategyParserTemplate = new StrategyParserTemplate();
-      
-    /** @var AbstractParserStrategy $viewParserStrategy */
-    $viewParserStrategy = ViewParserStrategy::initialized();
-    $allLines = $viewParserStrategy->explodeText($text);
-    
-    $viewParserStrategy->setAllLines($allLines);
-    
-    $strategyParserTemplate->parse($viewParserStrategy);
-    
-    return $viewParserStrategy->getOutputText();
-  }
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function parseStrategyTemplates($text)
+    {
+        $strategyParserTemplate = new StrategyParserTemplate();
+
+        /** @var AbstractParserStrategy $viewParserStrategy */
+        $viewParserStrategy = ViewParserStrategy::initialized();
+        $allLines = $viewParserStrategy->explodeText($text);
+
+        $viewParserStrategy->setAllLines($allLines);
+
+        $strategyParserTemplate->parse($viewParserStrategy);
+
+        return $viewParserStrategy->getOutputText();
+    }
 }

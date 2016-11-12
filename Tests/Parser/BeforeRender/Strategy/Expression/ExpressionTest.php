@@ -86,7 +86,7 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
             ->setLeft('$testLeft')
             ->setRight('$testRight->foo->determine($varOne, $varTwo)')
             ->setLineExpression($lineExpression);
-        
+
         $this->expression->evaluate($varDelegateExpression);
 
         $this->assertEquals($lineExpression, $varDelegateExpression->getChild()->getLineExpression());
@@ -104,7 +104,7 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
     {
         $assignmentParser = new AssignmentRenderParser();
         $assignmentParser->parseStrategyTemplates('$test->attr->getFunc()');
-        
+
         $evalPrint = Evaluator::getInstance()->getPrintedConditionArray();
     }
 }

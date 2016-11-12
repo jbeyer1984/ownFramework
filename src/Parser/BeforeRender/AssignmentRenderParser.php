@@ -28,7 +28,7 @@ class AssignmentRenderParser
 
         $viewAssignmentParserStrategy->setAllLines($allLines);
 
-        $strategyParserTemplate->parse($viewAssignmentParserStrategy);      
+        $strategyParserTemplate->parse($viewAssignmentParserStrategy);
 
         return $viewAssignmentParserStrategy->getOutputText();
     }
