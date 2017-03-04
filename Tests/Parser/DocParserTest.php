@@ -108,7 +108,7 @@ EOF
      */
     public function testConvertNumberTagStringsToNumbers($numberTagString, $expectedNumberStrings)
     {
-        $this->docParser->convertNumberTagStringsToNumbers($numberTagString);
+        $this->docParser->changeNumberTagStringsToNumbers($numberTagString);
         $numberStrings = $this->docParser->getNumberStrings();
         
         $this->assertEquals($expectedNumberStrings, $numberStrings);
@@ -179,12 +179,13 @@ EOF
     public function testAll()
     {
         $text = <<<EOF
+# her url: /gui/#parse
 #;; so what ;;
   # so that
     no tag
     # so this
   # easy
-    # something ;; mark ;;
+    # something ;; so what ;;
 # new secion
 EOF;
         $files = [];
@@ -211,7 +212,7 @@ EOF;
             $lines = $this->docParser->getLines();
             $numberTagStrings = $this->docParser->getNumberTagStrings();
 
-            $this->docParser->convertNumberTagStringsToNumbers($numberTagStrings);
+            $this->docParser->changeNumberTagStringsToNumbers($numberTagStrings);
             $numberStrings = $this->docParser->getNumberStrings();
 
             $this->docParser->replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings);

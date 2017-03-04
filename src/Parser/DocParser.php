@@ -89,7 +89,7 @@ class DocParser
     public function prepareLinesForConvert()
     {
         $this->parseTextToLines($this->text);
-        $this->goThroughLines($this->lines);
+        $this->markSpecificOccurrences($this->lines);
     }
 
     /**
@@ -103,7 +103,7 @@ class DocParser
     /**
      * @param array $lines
      */
-    protected function goThroughLines($lines)
+    protected function markSpecificOccurrences($lines)
     {
         $found = [];
         foreach ($lines as $lineNumber => $line) {
@@ -143,50 +143,51 @@ class DocParser
     /**
      * @param array $numberTagStrings
      */
-    public function convertNumberTagStringsToNumbers($numberTagStrings)
+    public function changeNumberTagStringsToNumbers($numberTagStrings)
     {
-        $indents = [0]; // store indents to 
+        $indentations = [0]; // store indents to 
         $countForIndents = []; // store counts for each section indentation
         $currentNumberStringArray = [];
         
         foreach ($numberTagStrings as $lineNumber => $line) {
-            $sameIndent = false;
-            $indent = false;
-            $unindent = false;
-            $unindentResetSets = []; // to store indentation for resetting counts of new section
+            $sameIndentation = false;
+            $increaseIndentation = false;
+            $decreaseIndentation = false;
+            $decreaseIndentationOfResetSets = []; // to store indentation for resetting counts of new section
             
             $count = substr_count($line, ' ');
 
-            if ($count == end($indents)) { // check indentation is same as last
-                array_pop($indents);
-                $sameIndent = true;
-            } elseif ($count > end($indents)) { // check indentation is bigger
-                $indent = true;
-            } elseif ($count < end($indents)) { // check indentation is smaller
-                // pop elements from indents and store it into $unindentResetSets until same indentation is found
-                $unindentResetSets[] = array_pop($indents);
-                $condition = ($count < end($unindentResetSets));
-                while ($condition && !empty($indents)) {
-                    $unindentResetSets[] = array_pop($indents);
-                    $condition = ($count < end($unindentResetSets));
+            if ($count == end($indentations)) { // check indentation is same as last
+                array_pop($indentations);
+                $sameIndentation = true;
+            } elseif ($count > end($indentations)) { // check indentation is bigger
+                $increaseIndentation = true;
+            } elseif ($count < end($indentations)) { // check indentation is smaller
+                // pop elements from indentations
+                // and store it into $decreaseIndentationOfResetSets until same indentation is found
+                $decreaseIndentationOfResetSets[] = array_pop($indentations);
+                $condition = ($count < end($decreaseIndentationOfResetSets));
+                while ($condition && !empty($indentations)) {
+                    $decreaseIndentationOfResetSets[] = array_pop($indentations);
+                    $condition = ($count < end($decreaseIndentationOfResetSets));
                 }
-                $unindent = true;
+                $decreaseIndentation = true;
             }
             
-            $indents[] = $count;
+            $indentations[] = $count;
 
             // set right counts in $countForIndents
             if (!isset($countForIndents[$count])) {
                 $countForIndents[$count] = 1;
-            } elseif ($sameIndent) {
+            } elseif ($sameIndentation) {
                 $countForIndents[$count] += 1;
-            } elseif ($indent) {
+            } elseif ($increaseIndentation) {
                 $countForIndents[$count] += 1;
-            } elseif ($unindent) {
-                // go through $unindentResetSets backward and check if new section has begun and set right count
+            } elseif ($decreaseIndentation) {
+                // go through $decreaseIndentationOfResetSets backward and check if new section has begun and set right count
                 $resetIndentation = false;
-                for ($i = count($unindentResetSets)-1; $i >= 0; $i--) {
-                    $fakePopped = $unindentResetSets[$i];
+                for ($i = count($decreaseIndentationOfResetSets)-1; $i >= 0; $i--) {
+                    $fakePopped = $decreaseIndentationOfResetSets[$i];
                     if ($resetIndentation) {
                         $countForIndents[$fakePopped] = 0; // here is the trick with init count = 0
                     } else {
@@ -196,22 +197,20 @@ class DocParser
                 }
             }
 
-            // set $currentNumberStringArray to right identation
-            if (empty($currentNumberStringArray)) {
-                $currentNumberStringArray[] = $countForIndents[$count];
-            } else {
-                if ($sameIndent) {
+            // set $currentNumberStringArray to right indentation
+            if (!empty($currentNumberStringArray)) {
+                if ($sameIndentation) {
                     array_pop($currentNumberStringArray);
-                } elseif ($unindent) {
-                    while (!empty($unindentResetSets)) {
-                        array_pop($unindentResetSets);
+                } elseif ($decreaseIndentation) {
+                    while (!empty($decreaseIndentationOfResetSets)) {
+                        array_pop($decreaseIndentationOfResetSets);
                         array_pop($currentNumberStringArray);
                     }
-                } elseif ($indent) {
+                } elseif ($increaseIndentation) {
                     // do nothing before
                 }
-                $currentNumberStringArray[] = $countForIndents[$count];
             }
+            $currentNumberStringArray[] = $countForIndents[$count];
 
             if (1 == count($currentNumberStringArray)) { // implement here strategy for other implementations
                 $this->numberStrings[$lineNumber] = preg_replace('/[^ ]/', '', $line) . $currentNumberStringArray[0] . '.';
@@ -234,11 +233,11 @@ class DocParser
         
         $tempNumberString = $numberStrings;
         
-        $dump = print_r($tempNumberString, true);
-        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $tempNumberString ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-        
-        $dump = print_r($this->markedAnkers, true);
-        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $this->markedAnkers ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+//        $dump = print_r($tempNumberString, true);
+//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $tempNumberString ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+//        
+//        $dump = print_r($this->markedAnkers, true);
+//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $this->markedAnkers ***' . PHP_EOL . " = " . $dump . PHP_EOL);
         
         foreach ($lines as $lineNumber => $line) {
             if (!empty($this->markedAnkers)) {
@@ -248,8 +247,8 @@ class DocParser
                     $found = [];
                     preg_match_all('/(;;.+?;;)/', $line, $found);
                     if (!empty($found)) {
-                        $dump = print_r($found, true);
-                        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $found ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+//                        $dump = print_r($found, true);
+//                        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $found ***' . PHP_EOL . " = " . $dump . PHP_EOL);
                         
                         foreach ($found as $innerFound) {
                             foreach ($innerFound as $oneFound) {
@@ -267,9 +266,10 @@ class DocParser
 
             if (!empty($numberTagStrings)) {
                 if (-1 < strpos($line, reset($numberTagStrings))) {
-                    $line = str_replace(reset($numberTagStrings), reset($numberStrings), $line);
+                    $line = substr_replace($line, reset($numberStrings), 0, strlen(reset($numberTagStrings)));
                     array_shift($numberTagStrings);
                     array_shift($numberStrings);
+                    
                     $this->lines[$lineNumber] = $line;
                 }
             }

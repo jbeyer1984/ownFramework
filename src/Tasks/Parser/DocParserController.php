@@ -21,7 +21,7 @@ class DocParserController extends Tasks
     $lines = $docParser->getLines();
     $numberTagStrings = $docParser->getNumberTagStrings();
 
-    $docParser->convertNumberTagStringsToNumbers($numberTagStrings);
+    $docParser->changeNumberTagStringsToNumbers($numberTagStrings);
     $numberStrings = $docParser->getNumberStrings();
 
     $docParser->replaceConvertedLinesWithUsualText($lines, $numberTagStrings, $numberStrings);
