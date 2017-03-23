@@ -28,12 +28,11 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
         $lineExpression = new LineExpression();
         $varExpression = new Expression();
         $varExpression
-            ->init()
             ->setIdentifier('$test')
             ->setLeft('$test = $var')
             ->setLineExpression($lineExpression);;
 
-        $this->expression->evaluate($varExpression);
+        $this->expression->evaluate();
 
         $this->assertEquals($this->expression->getParent(), $varExpression);
         $this->assertEquals($this->expression->getLineExpression(), $lineExpression);
@@ -51,14 +50,13 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
         $lineExpression = new LineExpression();
         $varDelegateExpression = new Expression();
         $varDelegateExpression
-            ->init()
             ->setIdentifier('$test')
             ->setAssignment(true)
             ->setLeft('$testLeft')
             ->setRight('$testRight->foo->determine')
             ->setLineExpression($lineExpression);;
 
-        $this->expression->evaluate($varDelegateExpression);
+        $this->expression->evaluate();
 
         $this->assertEquals($lineExpression, $varDelegateExpression->getChild()->getLineExpression());
         $this->assertEquals('$testRight', $varDelegateExpression->getChild()->getLeft());
@@ -81,13 +79,12 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
         $lineExpression = new LineExpression();
         $varDelegateExpression = new Expression();
         $varDelegateExpression
-            ->init()
             ->setIdentifier('$test')
             ->setLeft('$testLeft')
             ->setRight('$testRight->foo->determine($varOne, $varTwo)')
             ->setLineExpression($lineExpression);
 
-        $this->expression->evaluate($varDelegateExpression);
+        $this->expression->evaluate();
 
         $this->assertEquals($lineExpression, $varDelegateExpression->getChild()->getLineExpression());
         $this->assertEquals('$testRight', $varDelegateExpression->getChild()->getLeft());
@@ -100,6 +97,26 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['$varOne', '$varTwo'], $lineExpression->getPotentialVars());
     }
 
+    public function testEvaluate_multipleLines_withClosestIdentifierState()
+    {
+        $txt = '
+$test->attr = new Change();
+$test->attr->attr2->getFunc();
+$test->attr->getFunc();
+$test->attr->getFoo();
+$test = 3;
+$test = 5;
+';
+
+        $assignmentParser = new AssignmentRenderParser();
+        $assignmentParser->parseStrategyTemplates($txt);
+
+        $evalPrint = Evaluator::getInstance()->getPrintedConditionArray();
+        $dump = print_r($evalPrint, true);
+        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $evalPrint ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+        
+    }
+    
     public function testInGeneral()
     {
         $assignmentParser = new AssignmentRenderParser();
