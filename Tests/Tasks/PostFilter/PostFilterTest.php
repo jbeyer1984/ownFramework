@@ -21,15 +21,14 @@ class PostFilterTest extends PHPUnit_Framework_TestCase
     public function testPostFilterTextLikeCode_Task_success()
     {
         $postmanBulkEdit = <<<TXT
-items[0][article_id]:530
-items[0][article_name]:Scheisse mit Erdbeeren
-items[0][basefactor]:1
-items[0][consumptiontype_id]:1
-items[0][document_id]:370
-items[0][item_id]:
-items[0][quantity]:100
-items[0][unit_id]:20
-items[0][dry][hot]:clean
+items[0][0][division_id]:7
+items[0][0][article_id]:510
+items[0][0][value]:5
+items[0][0][division_price_id]:29398
+items[0][0][distributionchannel_id]:3
+items[0][0][taxrate_id]:7
+items[0][0][issideorder]:false
+items[0][0][dp_set]:true
 TXT;
         $this->postFilter->setOriginPostFilter($postmanBulkEdit);
         $this->postFilter->execute();

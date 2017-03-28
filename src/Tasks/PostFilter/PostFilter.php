@@ -103,13 +103,22 @@ class PostFilter
     {
         $nestedTabSpaces = implode('', $space);
         foreach ($parsedFilterArray as $key => $nestedData) {
+            $identifier = $key;
+            if (!is_numeric($key)) {
+                $identifier = "'" . $key . "'";
+            }
+
             if (!is_array($nestedData)) {
-                if (!is_numeric($nestedData)) {
-                    $nestedData = "'" . $nestedData . "'";
+                $value = $nestedData;
+
+                if (!is_numeric($value)) {
+                    $value = "'" . $value . "'";
                 }
-                $text .= $nestedTabSpaces . "['" . $key . "']" . ' => ' . $nestedData . PHP_EOL;
+
+                $text .= $nestedTabSpaces . "[" . $identifier . "]" . ' => ' . $value . PHP_EOL;
             } else {
-                $text .= $nestedTabSpaces . "['" . $key . "']" . ' => ' . "[" . PHP_EOL;
+
+                $text .= $nestedTabSpaces . "[" . $identifier . "]" . ' => ' . "[" . PHP_EOL;
                 $space[] = $this->tabSpace;
                 $text .= $this->getCreatedRecursiveArrayText($nestedData, '', $space);
                 array_pop($space);
