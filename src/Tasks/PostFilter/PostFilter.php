@@ -115,7 +115,7 @@ class PostFilter
                     $value = "'" . $value . "'";
                 }
 
-                $text .= $nestedTabSpaces . "[" . $identifier . "]" . ' => ' . $value . PHP_EOL;
+                $text .= $nestedTabSpaces . $identifier . ' => ' . $value . ',' . PHP_EOL;
             } else {
 
                 $text .= $nestedTabSpaces . "[" . $identifier . "]" . ' => ' . "[" . PHP_EOL;
