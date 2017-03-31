@@ -5,7 +5,7 @@
  * Time: 17:30
  */
 
-namespace MyApp\src\Tasks\PostFilter;
+namespace MyApp\src\PostFilter;
 
 class PostFilter
 {
@@ -128,39 +128,6 @@ class PostFilter
         }
         
         return $text;
-    }
-
-    /**
-     * @param array $parsedFilterArray
-     */
-    public function createPostFilterText($parsedFilterArray, $space)
-    {
-        $tabSpace = '    '; // tab space = 4
-        $space = [
-            $tabSpace,
-//            str_repeat(' ', strlen('0 => ['))
-            $tabSpace
-        ];
-        $textToInsertLikeCode = '';
-        $textToInsertLikeCode .= PHP_EOL;
-        $textToInsertLikeCode .= <<<TXT
-[
-    0 => [
-TXT;
-        $textToInsertLikeCode .= $tabSpace . $tabSpace . PHP_EOL;
-        
-        $nestedBegin = &$parsedFilterArray;
-        foreach ($nestedBegin as $key => $data) {
-            if (is_array($data)) { // if nested
-                
-                if (!isset($beginItemData[$key])) {
-                    $beginItemData[$key] = [];
-                }
-                $beginItemData = &$beginItemData[$key];
-            } else {
-                $beginItemData[$key] = trim($value);
-            }
-        }
     }
 
     /**

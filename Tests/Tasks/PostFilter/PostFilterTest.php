@@ -1,5 +1,5 @@
 <?php
-use MyApp\src\Tasks\PostFilter\PostFilter;
+use MyApp\src\PostFilter\PostFilter;
 
 define('VAR_WWW', '/var/www/ownFramework');
 //define( 'VAR_WWW', 'D:\\Programme\\xampp\\htdocs\\ownFramework\\' );
