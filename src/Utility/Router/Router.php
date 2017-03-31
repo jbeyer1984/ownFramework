@@ -44,6 +44,15 @@ class Router
           'class' => 'MyApp\src\Tasks\Parser\DocParserController',
         ],
       ],
+      'postfilter' => [
+          'start' => [
+              'params' => [
+                  'get' => '',
+                  'post' => 'input_string'
+              ],
+              'class' => 'MyApp\src\Tasks\Parser\PostFilterController',
+          ],
+      ],
       'evalparser' => [
         'start' => [
           'params' => [

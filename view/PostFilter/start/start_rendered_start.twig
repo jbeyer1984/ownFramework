@@ -1,0 +1,13 @@
+{#parent is from PostFilter/index/index_rendered.twig#}
+
+{% set rows = 20 %}
+{% set cols = 50 %}
+<form class="parser input" action="/index.php/postfilter/start" method="POST">
+  <textarea id="input_string" name="input_string" rows="{{ rows }}" cols="{{ cols }}">
+{{ inputString }}
+  </textarea>
+  <input type="submit" value="parse">
+</form>
+<div class="parser output">
+  {% include 'PostFilter/' ~ templateContext ~ '/'  ~ templateContext ~ '_output_rendered.twig' %}
+</div>

@@ -15,9 +15,14 @@ class PostFilter
     private $originPostFilter;
 
     /**
-     * @var array
+     * @var string
      */
     private $postFilter;
+
+    /**
+     * @var string
+     */
+    private $postFilterText;
     
     private $tabSpace = '';
 
@@ -38,6 +43,10 @@ class PostFilter
 
     public function execute()
     {
+        if (empty($this->originPostFilter)) {
+            return;
+        }
+
         $parsedFilterArray = $this->getParsedPostFilterArray($this->originPostFilter);
         $postFilterText = '[' . PHP_EOL;
         $space = [
@@ -46,7 +55,7 @@ class PostFilter
         $postFilterText .= $this->getCreatedRecursiveArrayText($parsedFilterArray, $postFilterText, $space);
         $postFilterText .= "]";
         
-        $this->postFilter = $postFilterText;
+        $this->postFilterText = $postFilterText;
     }
 
     /**
@@ -164,6 +173,25 @@ class PostFilter
     public function setPostFilter($postFilter)
     {
         $this->postFilter = $postFilter;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPostFilterText()
+    {
+        return $this->postFilterText;
+    }
+
+    /**
+     * @param string $postFilterText
+     * @return $this
+     */
+    public function setPostFilterText($postFilterText)
+    {
+        $this->postFilterText = $postFilterText;
 
         return $this;
     }

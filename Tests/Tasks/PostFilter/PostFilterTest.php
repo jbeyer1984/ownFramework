@@ -32,7 +32,7 @@ items[0][0][dp_set]:true
 TXT;
         $this->postFilter->setOriginPostFilter($postmanBulkEdit);
         $this->postFilter->execute();
-        $dump = print_r($this->postFilter->getPostFilter(), true);
+        $dump = print_r($this->postFilter->getPostFilterText(), true);
         error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $this->postFilter->getPostFilter() ***' . PHP_EOL . " = " . $dump . PHP_EOL);
         
     }

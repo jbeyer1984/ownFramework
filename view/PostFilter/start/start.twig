@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="de">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="/public/js/jquery-1.11.3.js"></script>
+  <script data-main="/public/js/main" src="/public/js/lib/require.js"></script>
+  {% block customJavascript %}
+  {% endblock %}
+</head>
+<body>
+{% block content %}
+  <div class="contentWrapper">
+    {% include 'PostFilter/' ~ templateContext ~ '/' ~ templateContext ~ '_rendered.twig' %}
+  </div>
+{% endblock %}
+</body>
+</html>
