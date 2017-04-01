@@ -4,10 +4,10 @@ namespace MyApp\src\Tasks\Flexible\Xml;
 
 use SimpleXMLElement;
 
-class Shaper
+class Parser
 {
     /**
-     * @var
+     * @var string
      */
     private $xmlText;
 
@@ -15,6 +15,11 @@ class Shaper
      * @var SimpleXMLElement
      */
     private $xmlObject;
+
+    /**
+     * @var array
+     */
+    private $xmlArray;
     
     public function __construct($xmlText)
     {
@@ -32,27 +37,26 @@ class Shaper
         $xmlText = $this->xmlText;
         $xmlData = simplexml_load_string($xmlText);
         $this->xmlObject = $xmlData;
-        $recursiveArray = $this->getRecursiveXmlArray($xmlData, []);
-        $dump = print_r($recursiveArray, true);
-        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $recursiveArray ***' . PHP_EOL . " = " . $dump . PHP_EOL);
-        
+        $json = json_encode($xmlData);
+        $recursiveArray = json_decode($json, true);
+        $recursiveArray = $this->fixXmlAttributes($recursiveArray);
+        $this->xmlArray = $recursiveArray;
     }
 
     /**
-     * @param SimpleXMLElement $xmlData
      * @param array $recursiveArray
      * @return array
      */
-    protected function getRecursiveXmlArray($xmlData, $recursiveArray)
+    protected function fixXmlAttributes(&$recursiveArray)
     {
-        foreach ($xmlData as $key => $data) {
-            /** @var SimpleXMLElement $data */
-            
-            if (empty((array)$data->attributes())) {
-                $value = (string)$data;
-                $recursiveArray[$key] = $value; 
+        foreach ($recursiveArray as $key => $data) {
+            if ($key == '@attributes') {
+                $recursiveArray['attributes'] = $recursiveArray[$key];
+                unset($recursiveArray[$key]);
             } else {
-                $recursiveArray[$key] = $this->getRecursiveXmlArray($data->attributes(), []);
+                if (is_array($data)) {
+                    $this->fixXmlAttributes($recursiveArray[$key]);
+                }    
             }
         }
         
@@ -60,7 +64,7 @@ class Shaper
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getXmlText()
     {
@@ -68,8 +72,8 @@ class Shaper
     }
 
     /**
-     * @param mixed $xmlText
-     * @return Shaper
+     * @param string $xmlText
+     * @return Parser
      */
     public function setXmlText($xmlText)
     {
@@ -88,11 +92,30 @@ class Shaper
 
     /**
      * @param SimpleXMLElement $xmlObject
-     * @return Shaper
+     * @return Parser
      */
     public function setXmlObject($xmlObject)
     {
         $this->xmlObject = $xmlObject;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getXmlArray()
+    {
+        return $this->xmlArray;
+    }
+
+    /**
+     * @param array $xmlArray
+     * @return Parser
+     */
+    public function setXmlArray($xmlArray)
+    {
+        $this->xmlArray = $xmlArray;
 
         return $this;
     }
