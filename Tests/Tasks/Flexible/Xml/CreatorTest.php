@@ -5,26 +5,26 @@ define('VAR_WWW', '/var/www/ownFramework');
 require_once(VAR_WWW . '/src/bootstrap.php');
 require_once(ROOT_PATH . '/vendor/autoload.php');
 
+use MyApp\src\Tasks\Flexible\Xml\Creator;
 use MyApp\src\Tasks\Flexible\Xml\Parser;
 
-class ParserTest extends PHPUnit_Framework_TestCase
+class CreatorTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Parser
      */
     private $parser;
 
+    /**
+     * @var Creator
+     */
+    private $creator;
+
     public function setUp()
     {
         $xmlText = <<<TXT
 <overview>
     <receipt bookingTime="2016-06-24T08:09:17.722+01:00" cashDeskVersion="ERROR" customerCounter="1" discountAmount="0" memory="real" receiptAmount="2.5" receiptPrinted="false" receiptStamp="3-4368" receivedMiles="0" redeemedMiles="0" rfidTag="" tip="0" type="refund" userId="user-54">
-        <cashDesk id="3" name="CASH 1" code="PB2-1"/>
-        <cashDeskIdentifer>1</cashDeskIdentifer>
-        <cashier firstName="Ben" id="54" lastName="Naish" socialSecurityNumber="abcdefgh" />
-        <customer id="42" firstName="Ben" lastName="Naish" />
-        <division version="xxx"/>
-        <payments paymenttype="ECCARD" amount="2.5" tip="0"/>
         <receiptPositions articleID="article-32" discountAmount="0.00" distributionChannel="3" distributionChannelName="Delivery" milesPayment="0" price="2.5" quantity="1" receivedMiles="0" redeemedMiles="0" serviceId="user-45" sum="2.5" tax="0.4" taxOriginal="0.4" taxRate="19.00" taxRateCode="A" taxRateId="taxrate-6" turnoverType="sales">
             <article id="32" name="Coffee"/>
             <service firstName="Ben" id="54" lastName="Naish"/>
@@ -50,10 +50,14 @@ TXT;
         $this->parser = new Parser($xmlText);
     }
 
-    public function testRecursiveArray_Parser_success()
+    public function testRecursiveArrayToXml_Creator_success()
     {
-        $xmlArray = $this->parser->getParsedData();
-        $dump = print_r($xmlArray, true);
-        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $xmlArray ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+//        $xmlArray = $this->parser->getParsedData();
+        $creator = new Creator($this->parser);
+        $xmlString = $creator->getConvertedData();
+//        $dump = print_r($xmlString, true);
+//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $xmlString ***' . PHP_EOL . " = " . $dump . PHP_EOL);
+        
+        file_put_contents(VAR_WWW . '/public/files/parsedXml.xml', $xmlString);
     }
 }

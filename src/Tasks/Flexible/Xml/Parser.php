@@ -30,9 +30,22 @@ class Parser
     protected function init()
     {
         $this->xmlObject = null;
+        $this->xmlArray = [];
     }
 
-    public function parseXml()
+    /**
+     * @return array
+     */
+    public function getParsedData()
+    {
+        if (empty($this->xmlArray)) {
+            $this->parseXml();
+        }
+        
+        return $this->xmlArray;
+    }
+
+    protected function parseXml()
     {
         $xmlText = $this->xmlText;
         $xmlData = simplexml_load_string($xmlText);
@@ -50,13 +63,12 @@ class Parser
     protected function fixXmlAttributes(&$recursiveArray)
     {
         foreach ($recursiveArray as $key => $data) {
-            if ($key == '@attributes') {
+            if (is_array($data)) {
+                $this->fixXmlAttributes($recursiveArray[$key]);
+            }
+            if ('@attributes' === $key) {
                 $recursiveArray['attributes'] = $recursiveArray[$key];
                 unset($recursiveArray[$key]);
-            } else {
-                if (is_array($data)) {
-                    $this->fixXmlAttributes($recursiveArray[$key]);
-                }    
             }
         }
         
