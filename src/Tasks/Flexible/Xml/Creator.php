@@ -47,8 +47,6 @@ class Creator
     protected function convertToXmlText(Parser $parser)
     {
         $dataArray = $parser->getParsedData();
-//        $dump = print_r($dataArray, true);
-//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** $dataArray ***' . PHP_EOL . " = " . $dump . PHP_EOL);
         
         $xmlText = '<overview>';
         $spaceIndent = '    '; // 4 spaces for tab
@@ -75,7 +73,7 @@ class Creator
         $spaceIndent = '    '; // 4 spaces for tab
 
         foreach ($dataArray as $key => $data) {
-            $tag = $this->createTag($key, $space);
+            $tag = $this->equipTag($key, $space);
             $tagArray = [
                 $tag
             ];
@@ -115,7 +113,7 @@ class Creator
                         $attributesArray = [];
                         
                         foreach ($data as $nestedData) {
-                            $tag = $this->createTag($key, $space);
+                            $tag = $this->equipTag($key, $space);
                             $tagArray[] = $tag;
                             $attributes = $this->createAttributes($nestedData);
                             $attributesArray[] = $attributes;
@@ -136,16 +134,16 @@ class Creator
                         $explodedNestedContent = explode(PHP_EOL, $nestedContent);
                         array_shift($explodedNestedContent); // take away first PHP_EOL entry
                         
-                        if (empty($explodedNestedContent)) { // one line Tag, no indent
-                            $explodedTag = explode(PHP_EOL, $tag);
-                            array_pop($explodedTag);
-                            $tag = implode(PHP_EOL, $explodedTag);
-                            $tag = str_replace(self::TAG_CLOSE_BEGIN, '/>', $tag);
+                        if (1 < count($explodedNestedContent)) { // nested Content
+                            $tag = $this->getCreatedNestedTag($tag);
+                        } elseif (1 == count($explodedNestedContent)) {
+                            $tag = $this->getCreatedTag($tag);
+                        } else {
+                            $tag = $this->getCreatedTagNoContent($tag);
                         }
                         
                         $tag = str_replace(self::ATTRIBUTES_TO_REPLACE, $attributes, $tag);
                         $tag = str_replace(self::CONTENT_TO_REPLACE, $nestedContent, $tag);
-                        $tag = str_replace(self::TAG_CLOSE_BEGIN, '>', $tag);
                         $xmlText .= $tag;
                     }
                 }
@@ -156,142 +154,75 @@ class Creator
     }
 
     /**
-     * @param $dataArray
-     * @param $space
-     * @return string
-     */
-    protected function ____OldGetRecursiveXmlText(&$dataArray, $space)
-    {
-        $spaceAttribute = ' ';
-        $xmlText = '';
-        $spaceIndent = '    '; // 4 spaces for tab
-        $openTag = '';
-        
-        foreach ($dataArray as $key => $data) {
-            $createTag = true;
-            if ('attributes' === $key) {
-                continue;
-            }
-            if (is_int($key)) { // if multiple rows of same xml Identifier
-                $createTag = false;
-            }
-            
-            if ($createTag) { // leave out if multiple rows of same xml Identifier
-                // create open tag
-                $openTag = PHP_EOL
-                    . implode('', $space)
-                    . '<' . $key
-                ;
-                 
-                if (is_array($data) && isset($data['attributes'])) {
-                    
-                    foreach ($data['attributes'] as $attributeKey => $attributeValue) {
-                        $openTag .= $spaceAttribute . $attributeKey . '="' . $attributeValue . '"';
-                    }
-                }
-            }
-            
-            if (is_array($data)) {
-                if ($createTag) {
-                    $space[] = $spaceIndent;
-                }
-                $recursiveText = $this->getRecursiveXmlText($data, $space);
-//                $xmlText .= 
-//                $openTag .= '>';
-                $xmlText .= $openTag; // $openTag can be '' look above .. multiple rows of same ..
-                
-                $recursiveIndented = false;
-                $explodedRecursiveText = explode(PHP_EOL, $recursiveText);
-                if (0 < count($explodedRecursiveText)) {
-                    foreach ($explodedRecursiveText as $line) {
-                        if (0 < count($space) && false === strpos($line, implode('', $space))) {
-                            $recursiveIndented = true;
-                        }
-                    }
-                }
-                array_pop($space);
-                if (!$recursiveIndented) {
-                    $closedTag = PHP_EOL
-                        . implode('', $space)
-                        . '</' . $key . '>'
-                    ;    
-                } else {
-                    $closedTag = '/>';
-                }
-                
-                $xmlText .= $recursiveText;
-                $xmlText .= $closedTag;
-            } else {
-                $xmlText .= PHP_EOL
-                    . implode('', $space)
-                    . '<' . $key . '>' . $data . '</' . $key . '>'
-                ;
-            }
-        }
-
-        return $xmlText;
-    }
-
-    /**
-     * @return string
-     */
-    public function getXmlText()
-    {
-        return $this->xmlText;
-    }
-
-    /**
-     * @param string $xmlText
-     * @return Creator
-     */
-    public function setXmlText($xmlText)
-    {
-        $this->xmlText = $xmlText;
-
-        return $this;
-    }
-
-    /**
      * @param $key
      * @param $space
-     * @return string
+     * @return array
      */
-    protected function createTag($key, $space)
+    protected function equipTag($key, $space)
     {
-        $tag = PHP_EOL
-            . implode('', $space)
-            . '<' . $key
-            . self::ATTRIBUTES_TO_REPLACE
-            . self::TAG_CLOSE_BEGIN
-            . self::CONTENT_TO_REPLACE
-            . PHP_EOL
-            . implode('', $space)
-            . '</' . $key . '>'
-        ;
-
+        $tag = [
+            'key' => $key,
+            'space' => implode('', $space)
+        ];
+        
         return $tag;
     }
 
     /**
-     * @param $space
-     * @param $recursiveText
-     * @return bool
+     * @param $tag
+     * @return string
      */
-    protected function isNestedIndent($space, $recursiveText)
+    protected function getCreatedTag($tag)
     {
-        $recursiveIndented = false;
-        $explodedRecursiveText = explode(PHP_EOL, $recursiveText);
-        if (0 < count($explodedRecursiveText)) {
-            foreach ($explodedRecursiveText as $line) {
-                if (0 < count($space) && false === strpos($line, implode('', $space))) {
-                    $recursiveIndented = true;
-                }
-            }
+        $tagText = PHP_EOL
+            . $tag['space']
+            . '<'
+            . $tag['key']
+            . self::ATTRIBUTES_TO_REPLACE
+            . '>'
+            . self::CONTENT_TO_REPLACE
+            . '</' . $tag['key'] . '>'
+        ;
 
-            return $recursiveIndented;
-        }
+        return $tagText;
+    }
 
-        return $recursiveIndented;
+    /**
+     * @param $tag
+     * @return string
+     */
+    protected function getCreatedTagNoContent($tag)
+    {
+        $tagText = PHP_EOL
+            . $tag['space']
+            . '<'
+            . $tag['key']
+            . self::ATTRIBUTES_TO_REPLACE
+            . '/>'
+        ;
+
+        return $tagText;
+    }
+
+    /**
+     * @param $tag
+     * @return string
+     */
+    protected function getCreatedNestedTag($tag)
+    {
+        $key = $tag['key'];
+        $tag = PHP_EOL
+            . $tag['space']
+            . '<' . $key
+            . self::ATTRIBUTES_TO_REPLACE
+            . '>'
+            . self::CONTENT_TO_REPLACE
+            . PHP_EOL
+            . $tag['space']
+            . '</' . $key . '>'
+        ;
+
+        return $tag;
     }
 
     /**
