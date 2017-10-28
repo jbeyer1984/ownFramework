@@ -34,7 +34,7 @@ class Db
     } else {
       $this->executeWithArgs($sql, $vars);
     }
-    $this->disconnect();
+//    $this->disconnect();
     return $this;
   }
 
@@ -80,8 +80,15 @@ class Db
     $this->connection = mysqli_connect("localhost","root","user20","ownframework");
     mysqli_set_charset($this->connection, 'utf8');
 
-    if($this->connection->connect_errno > 0){
-      die('Unable to connect to database [' . $this->connection->connect_error . ']');
+//    if ($this->connection->connect_error) {
+//      die('Connect Error (' . $this->connection->connect_errno . ') '
+//      . $this->connection->connect_error);
+//    }
+
+    if(mysqli_connect_error()){
+//      die('Unable to connect to database [' . $this->connection->connect_error . ']');
+        die('Connect Error (' . mysqli_connect_errno() . ') '
+            . mysqli_connect_error());
     }
   }
 
