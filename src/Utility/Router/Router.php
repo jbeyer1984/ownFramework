@@ -44,6 +44,43 @@ class Router
           'class' => 'MyApp\src\Tasks\Parser\DocParserController',
         ],
       ],
+      'finance' => [
+          'overview' => [
+              'params' => [
+                  'get' => '',
+                  'post' => ''
+              ],
+              'class' => 'MyApp\src\Tasks\Finance\FinanceController',
+          ],
+          'start' => [
+              'params' => [
+                  'get' => '',
+                  'post' => 'constdata/home/bauspar/bank'
+              ],
+              'class' => 'MyApp\src\Tasks\Finance\FinanceController',
+          ],
+          'bank' => [
+              'params' => [
+                  'get' => '',
+                  'post' => 'input/bank'
+              ],
+              'class' => 'MyApp\src\Tasks\Finance\FinanceBankController',
+          ],
+          'bausparanzahl' => [
+              'params' => [
+                  'get' => '',
+                  'post' => 'input/bauspar'
+              ],
+              'class' => 'MyApp\src\Tasks\Finance\FinanceBausparAnzahlController',
+          ],
+          'bausparabzahl' => [
+              'params' => [
+                  'get' => '',
+                  'post' => 'input/bauspar'
+              ],
+              'class' => 'MyApp\src\Tasks\Finance\FinanceBausparAbzahlController',
+          ],
+      ],
       'postfilter' => [
           'start' => [
               'params' => [

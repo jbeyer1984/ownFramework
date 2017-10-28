@@ -1,0 +1,16 @@
+{#parent is from Finance/index/index_rendered.twig#}
+<form action="/index.php/finance/bank" method="POST">
+    <h4>input header</h4>
+    {% for index, value in input %}
+        <label for="{{ index }}">{{ index }}</label>
+        <input type="text" name="input[{{ index }}]" value="{{ value }}"><br/>
+    {% endfor %}
+    <h4>input bank</h4>
+    {% for index, value in bank %}
+        <label for="{{ index }}">{{ index }}</label>
+        <input type="text" name="bank[{{ index }}]" value="{{ value }}"><br/>
+    {% endfor %}
+    <br/>
+    <input type="submit" value="berechnen">
+</form>
+<br/>

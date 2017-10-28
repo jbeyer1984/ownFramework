@@ -1,0 +1,29 @@
+{#parent is from Finance/index/index_rendered.twig#}
+<form action="/index.php/finance/start" method="POST">
+    <h4>constdata header</h4>
+    {% for index, value in constdata %}
+        <label for="{{ index }}">{{ index }}</label>
+        <input type="text" name="constdata[{{ index }}]" value="{{ value }}"><br/>
+    {% endfor %}
+    <h4>input header</h4>
+    {% for index, value in home %}
+      <label for="{{ index }}">{{ index }}</label>
+      <input type="text" name="home[{{ index }}]" value="{{ value }}"><br/>
+    {% endfor %}
+    <h4>input bausparvertrag</h4>
+    {% for index, value in bauspar %}
+      <label for="{{ index }}">{{ index }}</label>
+      <input type="text" name="bauspar[{{ index }}]" value="{{ value }}"><br/>
+    {% endfor %}
+    <h4>input bank</h4>
+    {% for index, value in bank %}
+        <label for="{{ index }}">{{ index }}</label>
+        <input type="text" name="bank[{{ index }}]" value="{{ value }}"><br/>
+    {% endfor %}
+    <br/>
+    <input type="submit" value="berechnen">
+</form>
+<br/>
+<div class="parser output">
+    {% include 'Finance/' ~ templateContext ~ '/'  ~ templateContext ~ '_output_rendered.twig' %}
+</div>

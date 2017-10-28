@@ -1,0 +1,8 @@
+{% for key, value in outputArray %}
+    {% if 'notiz' == key  %}
+        <label>{{ key }}</label><span class="note">{{ value }}</span><br/>
+    {% else %}
+        <label>{{ key }}</label> {{ value }}<br/>
+    {% endif %}
+    
+{% endfor %}
