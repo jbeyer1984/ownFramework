@@ -1,8 +1,8 @@
 <?php
 
-use MongoDB\Operation\Find;
 use MyApp\src\Parser\PostgresLog\Collector\CollectorFromBegin;
 use MyApp\src\Parser\PostgresLog\Collector\CollectorToEnd;
+use MyApp\src\Parser\PostgresLog\Collector\CollectorWholeLine;
 use MyApp\src\Parser\PostgresLog\Collector\Wrapper\CollectorOrWrapper;
 use MyApp\src\Parser\PostgresLog\FindCondition\FinderCondition;
 use MyApp\src\Parser\PostgresLog\FindCondition\FinderConditionEmpty;
@@ -33,26 +33,26 @@ class SectionDispatcherTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->txt = <<<TXT
-11:20:30 ipsum pseudo statement: SELECT
-Sql Select Line one
-Sql Select Line two
-Sql Select Line three;
-13:40:55 ipsum pseudo
-13:40:55 ipsum pseudo
-13:40:56 ipsum pseudo statement: INSERT INTO
-Sql Insert Line one
-Sql Insert Line two
-Sql Insert Line three;
-11:20:30 ipsum pseudo statement: SELECT
-Sql Select Line one
-Sql Select Line two
-Sql Select Line three;
-13:40:55 ipsum pseudo
-13:40:55 ipsum pseudo
-13:41:01 ipsum pseudo statement: UPDATE TABLE One LINE;
-13:40:55 ipsum pseudo
-13:40:55 ipsum pseudo
+2017-12-05 15:06:20 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_00000009
+2017-12-05 15:06:20 CET LOG:  Ausführen pdo_stmt_0000000a: SELECT "article".* FROM "mm"."article" WHERE (id = 507) LIMIT 1
+2017-12-05 15:06:20 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_0000000a
+2017-12-05 15:06:20 CET LOG:  Ausführen pdo_stmt_0000000b:
+                    SELECT mm.group.id, name, incomeaccount_id
+                    FROM mm.group
+                    INNER JOIN  mm.article_group
+                    ON mm.group.id = mm.article_group.group_id
+                    WHERE mm.article_group.article_id = 507
+2017-12-05 15:06:20 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_0000000b
+2017-12-05 15:06:20 CET LOG:  Ausführen pdo_stmt_0000000c:
+                    SELECT *
+                    FROM mm.category
+                    INNER JOIN  mm.article_category
+                    ON mm.category.id = mm.article_category.category_id
+                    WHERE mm.article_category.article_id = 507
+2017-12-05 15:06:20 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_0000000c
+2017-12-05 15:06:20 CET LOG:  Ausführen pdo_stmt_0000000d:
 TXT;
+//        $this->txt = file_get_contents('/home/jens/temp');
         $lineArray = explode(PHP_EOL, $this->txt);
 
         $this->sectionDispatcher = new SectionDispatcher($lineArray);
@@ -101,10 +101,10 @@ TXT;
 
         // pre condition
         $preCondition = new FinderConditionAndWrapper();
-        $preCondition->add(new FinderCondition('statement:'));
+        $preCondition->add(new FinderCondition('CET LOG:'));
         // collector begin
         $conditionRow = new FinderConditionAndWrapper();
-        $conditionRow->add(new FinderCondition('statement:'));
+        $conditionRow->add(new FinderCondition('    '));
         $collector = new CollectorFromBegin($typeOfSql);
         if (1 < count($explodedTypeOfSql)) {
             $collector = new CollectorOrWrapper($typeOfSql);
@@ -118,11 +118,11 @@ TXT;
         // collector end
         $conditionRow = new FinderConditionAndWrapper();
         $conditionRow->add(new FinderConditionEmpty(''));
-        $collector    = new CollectorToEnd(';');
+        $collector    = new CollectorWholeLine(' ');
         $collectorEnd = new FinderCollector($conditionRow, $collector);
         // post condition
         $postCondition = new FinderConditionAndWrapper();
-        $postCondition->add(new FinderCondition('ipsum'));
+        $postCondition->add(new FinderCondition('2017-12'));
 
         $section
             ->applyPreCondition($preCondition)
