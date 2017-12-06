@@ -26,6 +26,8 @@ class FinderConditionAndWrapper implements FinderInterface
     public function add(FinderInterface $condition)
     {
         $this->findConditionArray[] = $condition;
+        
+        return $this;
     }
 
     /**
