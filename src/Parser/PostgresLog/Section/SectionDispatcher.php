@@ -70,13 +70,18 @@ class SectionDispatcher
                     $nextLine = $this->linesArray[$key + 1];
                     $postConditionHit = $section->getPostCondition()->find($nextLine);
                 }
+
+                $lineToGrep = $this->getGreppedStringAfterLastColon($lineToGrep);
                 
                 $linesToCollect[] = $lineToGrep;
             }
 
             if ($preConditionHit && !$foundCollectorEnd) {
                  if($foundCollectorBeginOnSameLine) {
-                    $lineToGrep = $section->getCollectorBegin()->getGrepString($line);
+                     $lineToGrep = $section->getCollectorBegin()->getGrepString($line);
+
+                     $lineToGrep = $this->getGreppedStringAfterLastColon($lineToGrep);
+
                     $foundCollectorBeginOnSameLine = false;
                 } else {
                     $lineToGrep = $section->getCollectorEnd()->getGrepString($line);
@@ -110,8 +115,6 @@ class SectionDispatcher
             if ($linesArrayCount == $key) {
                 if ($foundCollectorEnd && !$postConditionHit) {
                     $this->grepLines[] = implode(PHP_EOL, $linesToCollect);
-                    $dump = print_r("LAST LINE FOUND: postConditionHit = false", true);
-                    error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' in ' . __METHOD__ . PHP_EOL . '*** "LAST LINE FOUND: postConditionHit = false" ***' . PHP_EOL . " = " . $dump . PHP_EOL);
                 }
             }
         }
@@ -123,5 +126,19 @@ class SectionDispatcher
     public function getGrepLines()
     {
         return $this->grepLines;
+    }
+
+    /**
+     * @param string $lineToGrep
+     * @return string
+     */
+    protected function getGreppedStringAfterLastColon($lineToGrep)
+    {
+        $foundPos = strrpos($lineToGrep, ':');
+        if (false !== $foundPos) {
+            $lineToGrep = substr($lineToGrep, $foundPos + 1);
+        }
+
+        return $lineToGrep;
     }
 }

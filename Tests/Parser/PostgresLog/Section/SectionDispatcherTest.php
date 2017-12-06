@@ -51,16 +51,64 @@ class SectionDispatcherTest extends PHPUnit_Framework_TestCase
                     WHERE mm.article_category.article_id = 507
 2017-12-05 15:06:20 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_0000000c
 2017-12-05 15:06:20 CET LOG:  Ausführen pdo_stmt_0000000d:
+2017-12-06 11:07:10 CET LOG:  Ausführen pdo_stmt_00000010:  SELECT mm.insert_copy_articlerow(680, 681, 'mm', 'article_supplier', 'article_id');
+2017-12-06 11:07:10 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_00000010
+2017-12-06 11:07:10 CET LOG:  Ausführen pdo_stmt_00000011:
+            WITH oldareas AS (
+        SELECT * FROM pp.article_area AS aa0
+        JOIN pp.area AS a ON a.name = 'DEFAULT'
+        WHERE aa0.area_id != a.id  AND aa0.article_id = $1
+    )
+
+    UPDATE pp.article_area AS aa
+    SET area_id = oa.area_id
+    FROM oldareas AS oa
+    WHERE
+    oa.division_id = aa.division_id
+    AND oa.article_id = $1
+    AND aa.article_id = $2
+
+
+2017-12-06 11:07:10 CET DETAIL:  Parameter: $1 = '680', $2 = '681'
+2017-12-06 11:07:10 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_00000010
+
 TXT;
-//        $this->txt = file_get_contents('/home/jens/temp');
+        $this->txt = file_get_contents('/var/log/postgresql/postgresql-9.4-main.log');
         $lineArray = explode(PHP_EOL, $this->txt);
+
+        $lastLogCountOfLines = 0;
+        $propertiesFileName = '/tmp/postgresLogProperties';
+        $propertiesArray = [];
+        $countLineArray      = count($lineArray);
+        $propertiesArray = [
+            'countOfLines' => $countLineArray
+        ];
+        if (file_exists($propertiesFileName)) {
+            $propertiesArrayRead = json_decode(file_get_contents($propertiesFileName), true);
+            $lastLogCountOfLines = $propertiesArrayRead['countOfLines'];
+            if ($countLineArray > $lastLogCountOfLines) {
+                $propertiesArray = [
+                    'countOfLines' => $lastLogCountOfLines + (count($lineArray) - $lastLogCountOfLines)
+                ];
+            }
+        }
+        $dump = print_r($lastLogCountOfLines, true);
+        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** $lastLogCountOfLines ***' . PHP_EOL . " = " . $dump . PHP_EOL, 3, '/home/jens/error.log');
+
+        file_put_contents($propertiesFileName, json_encode($propertiesArray));
+
+        $lineArray = array_slice($lineArray, $lastLogCountOfLines);
+
+        $dump = print_r(count($lineArray), true);
+        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** count($lineArray) ***' . PHP_EOL . " = " . $dump . PHP_EOL, 3, '/home/jens/error.log');
+
 
         $this->sectionDispatcher = new SectionDispatcher($lineArray);
     }
     
     public function testDispatching_SectionDispatcher_easy_success()
     {
-        $section = $this->getCreatedSection('SELECT|INSERT|UPDATE');
+        $section = $this->getCreatedSection('SELECT|INSERT|UPDATE|WITH');
         
         $this->sectionDispatcher->dispatch($section);
         $linesArray = $this->sectionDispatcher->getGrepLines();
@@ -104,7 +152,7 @@ TXT;
         $preCondition->add(new FinderCondition('CET LOG:'));
         // collector begin
         $conditionRow = new FinderConditionAndWrapper();
-        $conditionRow->add(new FinderCondition('    '));
+        $conditionRow->add(new FinderCondition(' '));
         $collector = new CollectorFromBegin($typeOfSql);
         if (1 < count($explodedTypeOfSql)) {
             $collector = new CollectorOrWrapper($typeOfSql);
@@ -117,12 +165,12 @@ TXT;
         $collectorBegin = new FinderCollector($conditionRow, $collector);
         // collector end
         $conditionRow = new FinderConditionAndWrapper();
-        $conditionRow->add(new FinderConditionEmpty(''));
+        $conditionRow->add(new FinderConditionEmpty(' '));
         $collector    = new CollectorWholeLine(' ');
         $collectorEnd = new FinderCollector($conditionRow, $collector);
         // post condition
         $postCondition = new FinderConditionAndWrapper();
-        $postCondition->add(new FinderCondition('2017-12'));
+        $postCondition->add(new FinderCondition('CET LOG'));
 
         $section
             ->applyPreCondition($preCondition)
