@@ -73,34 +73,34 @@ class SectionDispatcherTest extends PHPUnit_Framework_TestCase
 2017-12-06 11:07:10 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_00000010
 
 TXT;
-        $this->txt = file_get_contents('/var/log/postgresql/postgresql-9.4-main.log');
+//        $this->txt = file_get_contents('/var/log/postgresql/postgresql-9.4-main.log');
         $lineArray = explode(PHP_EOL, $this->txt);
 
-        $lastLogCountOfLines = 0;
-        $propertiesFileName = '/tmp/postgresLogProperties';
-        $propertiesArray = [];
-        $countLineArray      = count($lineArray);
-        $propertiesArray = [
-            'countOfLines' => $countLineArray
-        ];
-        if (file_exists($propertiesFileName)) {
-            $propertiesArrayRead = json_decode(file_get_contents($propertiesFileName), true);
-            $lastLogCountOfLines = $propertiesArrayRead['countOfLines'];
-            if ($countLineArray > $lastLogCountOfLines) {
-                $propertiesArray = [
-                    'countOfLines' => $lastLogCountOfLines + (count($lineArray) - $lastLogCountOfLines)
-                ];
-            }
-        }
-        $dump = print_r($lastLogCountOfLines, true);
-        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** $lastLogCountOfLines ***' . PHP_EOL . " = " . $dump . PHP_EOL, 3, '/home/jens/error.log');
-
-        file_put_contents($propertiesFileName, json_encode($propertiesArray));
-
-        $lineArray = array_slice($lineArray, $lastLogCountOfLines);
-
-        $dump = print_r(count($lineArray), true);
-        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** count($lineArray) ***' . PHP_EOL . " = " . $dump . PHP_EOL, 3, '/home/jens/error.log');
+//        $lastLogCountOfLines = 0;
+//        $propertiesFileName = '/tmp/postgresLogProperties';
+//        $propertiesArray = [];
+//        $countLineArray      = count($lineArray);
+//        $propertiesArray = [
+//            'countOfLines' => $countLineArray
+//        ];
+//        if (file_exists($propertiesFileName)) {
+//            $propertiesArrayRead = json_decode(file_get_contents($propertiesFileName), true);
+//            $lastLogCountOfLines = $propertiesArrayRead['countOfLines'];
+//            if ($countLineArray > $lastLogCountOfLines) {
+//                $propertiesArray = [
+//                    'countOfLines' => $lastLogCountOfLines + (count($lineArray) - $lastLogCountOfLines)
+//                ];
+//            }
+//        }
+//        $dump = print_r($lastLogCountOfLines, true);
+//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** $lastLogCountOfLines ***' . PHP_EOL . " = " . $dump . PHP_EOL, 3, '/home/jens/error.log');
+//
+//        file_put_contents($propertiesFileName, json_encode($propertiesArray));
+//
+//        $lineArray = array_slice($lineArray, $lastLogCountOfLines);
+//
+//        $dump = print_r(count($lineArray), true);
+//        error_log(PHP_EOL . '-$- in ' . basename(__FILE__) . ':' . __LINE__ . ' -> ' . __METHOD__ . PHP_EOL . '*** count($lineArray) ***' . PHP_EOL . " = " . $dump . PHP_EOL, 3, '/home/jens/error.log');
 
 
         $this->sectionDispatcher = new SectionDispatcher($lineArray);

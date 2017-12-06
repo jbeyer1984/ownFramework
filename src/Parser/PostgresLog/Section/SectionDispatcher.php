@@ -64,7 +64,7 @@ class SectionDispatcher
             }
 
             if ($foundCollectorBeginOnSameLine && $foundCollectorEndOnSameLine) {
-                $lineToGrep = $section->getCollectorBegin()->getGrepString($line);
+                $lineToGrep = $section->getCollectorEnd()->getGrepString($line); // check this
 
                 if ($linesArrayCount != $key) {
                     $nextLine = $this->linesArray[$key + 1];
