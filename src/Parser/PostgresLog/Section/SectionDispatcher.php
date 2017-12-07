@@ -107,7 +107,7 @@ class SectionDispatcher
             
             if (/*$foundCollectorEnd && */$postConditionHit) {
                 if (0 < count($linesToCollect)) {
-                    $this->grepLines[] = implode(PHP_EOL, $linesToCollect);
+                    $this->grepLines[] = PHP_EOL . implode(PHP_EOL, $linesToCollect);
                 }
 
                 $preConditionHit = false;
