@@ -37,7 +37,9 @@ class SectionDispatcherTest extends PHPUnit_Framework_TestCase
 2017-12-05 15:06:20 CET LOG:  Ausführen pdo_stmt_0000000a: SELECT "article".* FROM "mm"."article" WHERE (id = 507) LIMIT 1
 2017-12-05 15:06:20 CET LOG:  Anweisung: DEALLOCATE pdo_stmt_0000000a
 2017-12-05 15:06:20 CET LOG:  Ausführen pdo_stmt_0000000b:
-                    SELECT mm.group.id, name, incomeaccount_id
+                    SELECT mm.group.id, name, incomeaccount_id,
+                    sum(ri.quantity)::integer AS sales_quantity,
+                    (ahr.baseunitfactor * ahr.conversionvalue)::numeric(12,4), ahr.step + 1
                     FROM mm.group
                     INNER JOIN  mm.article_group
                     ON mm.group.id = mm.article_group.group_id

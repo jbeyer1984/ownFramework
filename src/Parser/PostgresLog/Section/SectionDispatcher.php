@@ -56,15 +56,15 @@ class SectionDispatcher
                     $foundCollectorBegin = true;
                     $foundCollectorBeginOnSameLine = true;
                 }
-                $lineGrep = $section->getCollectorEnd()->getGrepString($line);
+                /*$lineGrep = $section->getCollectorEnd()->getGrepString($line);
                 if ('' != $lineGrep) {
                     $foundCollectorEnd = true;
                     $foundCollectorEndOnSameLine = true;
-                }
+                }*/
             }
 
-            if ($foundCollectorBeginOnSameLine && $foundCollectorEndOnSameLine) {
-                $lineToGrep = $section->getCollectorEnd()->getGrepString($line); // check this
+            if ($foundCollectorBeginOnSameLine/* && $foundCollectorEndOnSameLine*/) {
+                $lineToGrep = $section->getCollectorBegin()->getGrepString($line); // check this
 
                 if ($linesArrayCount != $key) {
                     $nextLine = $this->linesArray[$key + 1];
@@ -72,42 +72,49 @@ class SectionDispatcher
                 }
 
                 $lineToGrep = $this->getGreppedStringAfterLastColon($lineToGrep);
-                
+
                 $linesToCollect[] = $lineToGrep;
             }
 
-            if ($preConditionHit && !$foundCollectorEnd) {
-                 if($foundCollectorBeginOnSameLine) {
-                     $lineToGrep = $section->getCollectorBegin()->getGrepString($line);
+            if ($preConditionHit/* && !$foundCollectorEnd*/) {
+                $lineToGrep = '';
+                if($foundCollectorBeginOnSameLine) {
+//                    $lineToGrep = $section->getCollectorBegin()->getGrepString($line);
 
-                     $lineToGrep = $this->getGreppedStringAfterLastColon($lineToGrep);
+//                    $lineToGrep = $this->getGreppedStringAfterLastColon($lineToGrep);
 
                     $foundCollectorBeginOnSameLine = false;
                 } else {
-                    $lineToGrep = $section->getCollectorEnd()->getGrepString($line);
+                    /*$lineToGrep = $section->getCollectorEnd()->getGrepString($line);
                     if ('' != $lineToGrep) {
                         $foundCollectorEnd = true;
-                    } else { // fetch whole line
+                    } else { // fetch whole line*/
                         $lineToGrep = $line;
-                    }
+                    /*}*/
                 }
 
                 if ($linesArrayCount != $key) {
                     $nextLine = $this->linesArray[$key + 1];
                     $postConditionHit = $section->getPostCondition()->find($nextLine);
                 }
-                
-                $linesToCollect[] = $lineToGrep;
+
+                if ('' != $lineToGrep) {
+                    if (false === strpos($lineToGrep, 'CET LOG')) {
+                        $linesToCollect[] = $lineToGrep;
+                    }
+                }
             }
             
-            if ($foundCollectorEnd && $postConditionHit) {
-                $this->grepLines[] = implode(PHP_EOL, $linesToCollect);
+            if (/*$foundCollectorEnd && */$postConditionHit) {
+                if (0 < count($linesToCollect)) {
+                    $this->grepLines[] = implode(PHP_EOL, $linesToCollect);
+                }
 
                 $preConditionHit = false;
                 $foundCollectorBegin = false;
                 $foundCollectorEnd = false;
                 $foundCollectorBeginOnSameLine = false;
-                $foundCollectorEndOnSameLine = false;
+//                $foundCollectorEndOnSameLine = false;
                 $postConditionHit = false;
                 $linesToCollect = [];
             }
@@ -134,8 +141,9 @@ class SectionDispatcher
      */
     protected function getGreppedStringAfterLastColon($lineToGrep)
     {
+        $foundCetLog = (false !== strpos($lineToGrep, 'CET LOG'));
         $foundPos = strrpos($lineToGrep, ':');
-        if (false !== $foundPos) {
+        if ($foundCetLog && false !== $foundPos) {
             $lineToGrep = substr($lineToGrep, $foundPos + 1);
         }
 
